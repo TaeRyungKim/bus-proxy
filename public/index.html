@@ -6,8 +6,25 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <title>삼평교 버스</title>
-<link rel="apple-touch-icon" href="https://fav.farm/🚌"/>
-
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      var c = document.createElement("canvas");
+      c.width = 180; c.height = 180;
+      var ctx = c.getContext("2d");
+      ctx.fillStyle = "#0B0F1A";
+      ctx.beginPath();
+      ctx.roundRect(0,0,180,180,36);
+      ctx.fill();
+      ctx.font = "110px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("🚌", 90, 95);
+      var link = document.createElement("link");
+      link.rel = "apple-touch-icon";
+      link.href = c.toDataURL("image/png");
+      document.head.appendChild(link);
+    });
+  </script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -173,7 +190,7 @@ function isTarget(name) {
 }
 function secToMin(v) {
   if (v == null || v === "" || Number(v) < 0) return null;
-  const m = Math.round(Number(v));
+  const m = Math.round(Number(v) / 60);
   return m <= 0 ? 0 : m;
 }
 function arrColor(min) {
