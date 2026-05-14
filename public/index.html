@@ -175,13 +175,14 @@ setInterval(() => {
   const h = now.getHours();
   document.getElementById("rush").classList.toggle("show", h >= 17 && h <= 20);
 }, 1000);
-
 function getBusColor(name) {
+  if (!name || typeof name !== "string") return "#6B7280";
   if (BUS_COLOR[name]) return BUS_COLOR[name];
   for (const k of Object.keys(BUS_COLOR)) { if (name.startsWith(k)) return BUS_COLOR[k]; }
   return "#6B7280";
 }
 function isTarget(name) {
+  if (!name || typeof name !== "string") return false;
   return TARGET.some(t => name === t || name.startsWith(t));
 }
 function secToMin(v) {
