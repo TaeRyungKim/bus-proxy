@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>삼평교 버스</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0B0F1A;
+      color: #F1F5F9;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* 헤더 */
+    .header {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(11,15,26,0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      padding: 16px 20px 12px;
+    }
+    .header-top {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .header-left { display: flex; align-items: center; gap: 10px; }
+    .header-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+    .header-sub { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+    .header-right { text-align: right; }
+    .clock { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .rush { font-size: 10px; color: #FCA5A5; font-weight: 700; margin-top: 2px; display: none; }
+    .rush.show { display: block; }
+
+    /* 버튼들 */
+    .btn-row { display: flex; gap: 6px; margin-top: 10px; }
+    .btn {
+      border-radius: 20px; padding: 5px 13px;
+      font-size: 12px; font-weight: 600;
+      cursor: pointer; border: none; transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-default {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      color: rgba(255,255,255,0.65);
+    }
+    .btn-auto {
+      background: rgba(34,197,94,0.13);
+      border: 1px solid rgba(34,197,94,0.35);
+      color: #22C55E;
+    }
+    .btn:disabled { color: rgba(255,255,255,0.2); cursor: not-allowed; }
+    .last-updated {
+      font-size: 11px; color: rgba(255,255,255,0.22); margin-top: 8px;
+    }
+
+    /* 콘텐츠 */
+    .content { padding: 14px 16px 60px; }
+
+    /* 에러 */
+    .error-box {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 12px; padding: 13px 16px;
+      color: #FCA5A5; font-size: 13px;
+      margin-bottom: 14px; text-align: center;
+      display: none;
+    }
+
+    /* 스피너 */
+    .spinner-wrap { text-align: center; padding: 72px 0; display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(255,255,255,0.07);
+      border-top: 3px solid rgba(255,255,255,0.55);
+      border-radius: 50%; margin: 0 auto;
+      animation: spin 0.85s linear infinite;
+    }
+    .spinner-txt { color: rgba(255,255,255,0.3); font-size: 13px; margin-top: 14px; }
+
+    /* 버스 카드 */
+    .bus-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 15px 16px;
+      margin-bottom: 11px; transition: opacity 0.3s;
+    }
+    .bus-card.dimmed { opacity: 0.65; }
+    .bus-card-top {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 13px;
+    }
+    .bus-badge {
+      border-radius: 9px; padding: 3px 12px;
+      font-size: 17px; font-weight: 800; letter-spacing: -0.5px;
+      white-space: nowrap; color: #fff;
+    }
+    .bus-dest { font-size: 12px; color: rgba(255,255,255,0.35); }
+    .arrival-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .arrival-box {
+      background: rgba(0,0,0,0.22);
+      border-radius: 11px; padding: 11px 10px; text-align: center;
+    }
+    .arrival-label { font-size: 10px; color: rgba(255,255,255,0.28); margin-bottom: 7px; }
+    .arrival-min { font-size: 26px; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+    .arrival-seat { font-size: 11px; color: rgba(255,255,255,0.3); }
+    .arrival-plate { font-size: 10px; color: rgba(255,255,255,0.17); margin-top: 3px; }
+    .no-info { font-size: 12px; color: rgba(255,255,255,0.2); text-align: center; padding: 8px 0; }
+
+    .footer {
+      margin-top: 32px; text-align: center;
+      font-size: 10px; color: rgba(255,255,255,0.13); line-height: 2;
+    }
+    .section-label {
+      font-size: 11px; color: rgba(255,255,255,0.3);
+      font-weight: 600; letter-spacing: 0.5px; margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-left">
+      <span style="font-size:22px">🚌</span>
+      <div>
+        <div class="header-title">삼평교</div>
+        <div class="header-sub">판교테크노밸리 · 5198</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="rush" id="rush">🚨 퇴근 혼잡</div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-default" id="autoBtn" onclick="toggleAuto()">자동갱신</button>
+    <button class="btn btn-default" id="refreshBtn" onclick="refresh()">🔄 새로고침</button>
+  </div>
+  <div class="last-updated" id="lastUpdated"></div>
+</div>
+
+<div class="content">
+  <div class="error-box" id="errorBox"></div>
+  <div class="spinner-wrap" id="spinner">
+    <div class="spinner"></div>
+    <div class="spinner-txt">실시간 버스 정보 불러오는 중…</div>
+  </div>
+  <div class="section-label" id="sectionLabel" style="display:none">실시간 도착 정보</div>
+  <div id="busList"></div>
+  <div class="footer">
+    <div>경기도 버스도착정보 공공데이터 API · 실시간 예측값</div>
+    <div>교통 상황에 따라 실제 도착과 차이가 있을 수 있습니다</div>
+  </div>
+</div>
+
+<script>
+const TARGET = ["5600","5700","5700A","5700B","6900","1007","1007-1"];
+const BUS_COLOR = {
+  "5600":"#FF6B35","5700":"#00C9A7","5700A":"#00C9A7","5700B":"#00C9A7",
+  "6900":"#A78BFA","1007":"#34D399","1007-1":"#059669"
+};
+
+let autoMode = false;
+let autoTimer = null;
+
+// 시계
+setInterval(() => {
+  const now = new Date();
+  document.getElementById("clock").textContent =
+    now.toLocaleTimeString("ko-KR", {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  const h = now.getHours();
+  document.getElementById("rush").classList.toggle("show", h >= 17 && h <= 20);
+}, 1000);
+
+function getBusColor(name) {
+  if (BUS_COLOR[name]) return BUS_COLOR[name];
+  for (const k of Object.keys(BUS_COLOR)) { if (name.startsWith(k)) return BUS_COLOR[k]; }
+  return "#6B7280";
+}
+function isTarget(name) {
+  return TARGET.some(t => name === t || name.startsWith(t));
+}
+function secToMin(v) {
+  if (v == null || v === "" || Number(v) < 0) return null;
+  const m = Math.round(Number(v) / 60);
+  return m <= 0 ? 0 : m;
+}
+function arrColor(min) {
+  if (min == null) return "#4B5563";
+  if (min <= 0)    return "#EF4444";
+  if (min <= 5)    return "#F97316";
+  if (min <= 10)   return "#EAB308";
+  return "#22C55E";
+}
+
+function parseXml(xml) {
+  const doc = new DOMParser().parseFromString(xml, "text/xml");
+  return [...doc.querySelectorAll("busArrivalList")].map(el => {
+    const g = tag => el.querySelector(tag)?.textContent ?? "";
+    return {
+      routeName: g("routeName"), destination: g("routeDestName"),
+      min1: secToMin(g("predictTime1")), seat1: g("remainSeatCnt1") !== "" ? Number(g("remainSeatCnt1")) : -1, plate1: g("plateNo1"),
+      min2: secToMin(g("predictTime2")), seat2: g("remainSeatCnt2") !== "" ? Number(g("remainSeatCnt2")) : -1, plate2: g("plateNo2"),
+    };
+  });
+}
+function parseJsonData(json) {
+  let list = json?.response?.msgBody?.busArrivalList ?? json?.msgBody?.busArrivalList ?? json?.busArrivalList ?? [];
+  if (!Array.isArray(list)) list = [list];
+  return list.map(b => ({
+    routeName: b.routeName ?? "-", destination: b.routeDestName ?? "",
+    min1: secToMin(b.predictTime1), seat1: b.remainSeatCnt1 != null ? Number(b.remainSeatCnt1) : -1, plate1: b.plateNo1 ?? "",
+    min2: secToMin(b.predictTime2), seat2: b.remainSeatCnt2 != null ? Number(b.remainSeatCnt2) : -1, plate2: b.plateNo2 ?? "",
+  }));
+}
+
+async function fetchBus() {
+  // 같은 도메인이라 CORS 없음!
+  const res = await fetch("/api/bus");
+  if (!res.ok) throw new Error(`서버 오류 ${res.status}`);
+  const text = await res.text();
+  let list = text.trim().startsWith("<") ? parseXml(text) : parseJsonData(JSON.parse(text));
+  return list
+    .filter(b => isTarget(b.routeName))
+    .sort((a, b) => {
+      const ai = TARGET.findIndex(t => a.routeName.startsWith(t));
+      const bi = TARGET.findIndex(t => b.routeName.startsWith(t));
+      return (ai < 0 ? 99 : ai) - (bi < 0 ? 99 : bi);
+    });
+}
+
+function renderBus(buses) {
+  const list = document.getElementById("busList");
+  if (buses.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:56px 0;color:rgba(255,255,255,0.25);font-size:14px">현재 운행 중인 버스가 없어요.</div>`;
+    return;
+  }
+  document.getElementById("sectionLabel").style.display = "block";
+  list.innerHTML = buses.map(bus => {
+    const color = getBusColor(bus.routeName);
+    const noInfo = bus.min1 == null && bus.min2 == null;
+    const arrBox = (label, min, seat, plate) => `
+      <div class="arrival-box">
+        <div class="arrival-label">${label}</div>
+        <div class="arrival-min" style="color:${arrColor(min)}">${min == null ? "-" : min === 0 ? "곧도착" : min+"분"}</div>
+        ${seat >= 0 ? `<div class="arrival-seat">잔여 ${seat}석</div>` : ""}
+        ${plate ? `<div class="arrival-plate">${plate}</div>` : ""}
+      </div>`;
+    return `
+      <div class="bus-card">
+        <div class="bus-card-top">
+          <div class="bus-badge" style="background:${color};box-shadow:0 3px 12px ${color}44">${bus.routeName}</div>
+          ${bus.destination ? `<div class="bus-dest">→ ${bus.destination} 방면</div>` : ""}
+        </div>
+        ${noInfo
+          ? `<div class="no-info">운행 정보 없음</div>`
+          : `<div class="arrival-grid">
+               ${arrBox("첫번째 버스", bus.min1, bus.seat1, bus.plate1)}
+               ${arrBox("다음 버스",   bus.min2, bus.seat2, bus.plate2)}
+             </div>`
+        }
+      </div>`;
+  }).join("");
+}
+
+async function refresh() {
+  const btn = document.getElementById("refreshBtn");
+  const spinner = document.getElementById("spinner");
+  const errorBox = document.getElementById("errorBox");
+  btn.disabled = true;
+  btn.textContent = "조회중…";
+  spinner.style.display = "block";
+  errorBox.style.display = "none";
+
+  // 기존 카드 살짝 흐리게
+  document.querySelectorAll(".bus-card").forEach(c => c.classList.add("dimmed"));
+
+  try {
+    const buses = await fetchBus();
+    renderBus(buses);
+    const now = new Date().toLocaleTimeString("ko-KR", {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    document.getElementById("lastUpdated").textContent = `${now} 업데이트 · ${buses.length}개 노선`;
+  } catch(e) {
+    errorBox.textContent = "⚠️ " + e.message;
+    errorBox.style.display = "block";
+  } finally {
+    spinner.style.display = "none";
+    btn.disabled = false;
+    btn.textContent = "🔄 새로고침";
+    document.querySelectorAll(".bus-card").forEach(c => c.classList.remove("dimmed"));
+  }
+}
+
+function toggleAuto() {
+  autoMode = !autoMode;
+  const btn = document.getElementById("autoBtn");
+  if (autoMode) {
+    btn.className = "btn btn-auto";
+    btn.textContent = "⏱ 30초 자동갱신 ON";
+    autoTimer = setInterval(refresh, 30000);
+  } else {
+    btn.className = "btn btn-default";
+    btn.textContent = "자동갱신";
+    clearInterval(autoTimer);
+  }
+}
+
+// 첫 로드
+refresh();
+</script>
+</body>
+</html>
