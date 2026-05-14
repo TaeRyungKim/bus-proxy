@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>날씨</title>
+  <script>
+    window.addEventListener("DOMContentLoaded", function() {
+      var c = document.createElement("canvas");
+      c.width = 180; c.height = 180;
+      var ctx = c.getContext("2d");
+      ctx.fillStyle = "#0B1A2E";
+      ctx.beginPath();
+      ctx.roundRect(0,0,180,180,36);
+      ctx.fill();
+      ctx.font = "110px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("🌤️", 90, 95);
+      var link = document.createElement("link");
+      link.rel = "apple-touch-icon";
+      link.href = c.toDataURL("image/png");
+      document.head.appendChild(link);
+    });
+  </script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0B1A2E; color: #F1F5F9;
+      font-family: 'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+      min-height: 100vh; padding: 20px 16px 40px;
+    }
+    .title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .subtitle { font-size: 11px; color: rgba(255,255,255,0.3); margin-bottom: 20px; }
+
+    /* 위치 버튼 */
+    .loc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+    .loc-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 14px; padding: 12px 8px;
+      cursor: pointer; text-align: center; transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .loc-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
+    .loc-icon { font-size: 20px; margin-bottom: 4px; }
+    .loc-label { font-size: 12px; font-weight: 700; color: #F1F5F9; }
+    .loc-sub { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+    /* 에러 */
+    .error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25);
+      border-radius: 12px; padding: 13px 16px; color: #FCA5A5;
+      font-size: 13px; margin-bottom: 14px; text-align: center; display: none; }
+
+    /* 스피너 */
+    .spinner-wrap { text-align: center; padding: 60px 0; display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { width: 40px; height: 40px;
+      border: 3px solid rgba(255,255,255,0.07);
+      border-top: 3px solid rgba(255,255,255,0.55);
+      border-radius: 50%; margin: 0 auto; animation: spin 0.85s linear infinite; }
+    .spinner-txt { color: rgba(255,255,255,0.3); font-size: 13px; margin-top: 14px; }
+
+    /* 메인 카드 */
+    .main-card {
+      background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(96,165,250,0.05));
+      border: 1px solid rgba(96,165,250,0.2);
+      border-radius: 20px; padding: 20px; margin-bottom: 12px; display: none;
+    }
+    .loc-tag { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 12px; }
+    .main-row { display: flex; align-items: center; justify-content: space-between; }
+    .big-temp { font-size: 64px; font-weight: 200; line-height: 1; letter-spacing: -2px; }
+    .weather-txt { font-size: 15px; font-weight: 600; margin-top: 4px; }
+    .feels-txt { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+    .big-emoji { font-size: 72px; }
+
+    /* 상세 그리드 */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; display: none; }
+    .info-box { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 12px 14px; }
+    .info-label { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 5px; }
+    .info-value { font-size: 15px; font-weight: 700; }
+
+    /* 시간별 */
+    .hourly-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: none; }
+    .section-label { font-size: 11px; color: rgba(255,255,255,0.35); font-weight: 600;
+      letter-spacing: 0.5px; margin-bottom: 12px; }
+    .hourly-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+    .hour-item { text-align: center; flex-shrink: 0; }
+    .hour-label { font-size: 10px; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
+    .hour-emoji { font-size: 18px; margin-bottom: 4px; }
+    .hour-temp { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .hour-rain { font-size: 10px; color: #60A5FA; }
+
+    /* 요약 */
+    .summary { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 12px; padding: 12px 14px; font-size: 12px;
+      color: rgba(255,255,255,0.5); line-height: 1.8; display: none; }
+
+    .empty { text-align: center; padding: 48px 0; color: rgba(255,255,255,0.2);
+      font-size: 14px; line-height: 2; }
+    .footer { margin-top: 24px; text-align: center; font-size: 10px;
+      color: rgba(255,255,255,0.13); line-height: 2; }
+  </style>
+</head>
+<body>
+
+<div class="title">🌤️ 날씨</div>
+<div class="subtitle">오늘 하루 날씨를 확인해보세요</div>
+
+<div class="loc-grid">
+  <div class="loc-btn" onclick="loadGPS()">
+    <div class="loc-icon" id="gpsIcon">📍</div>
+    <div class="loc-label">현재 위치</div>
+    <div class="loc-sub">GPS</div>
+  </div>
+  <div class="loc-btn" onclick="loadLoc(37.4023, 127.1080, '🏢 회사', '삼평동')">
+    <div class="loc-icon">🏢</div>
+    <div class="loc-label">회사</div>
+    <div class="loc-sub">삼평동</div>
+  </div>
+  <div class="loc-btn" onclick="loadLoc(37.4969, 127.1480, '🏠 집', '마천동')">
+    <div class="loc-icon">🏠</div>
+    <div class="loc-label">집</div>
+    <div class="loc-sub">마천동</div>
+  </div>
+</div>
+
+<div class="error" id="errorBox"></div>
+<div class="spinner-wrap" id="spinner">
+  <div class="spinner"></div>
+  <div class="spinner-txt">날씨 불러오는 중…</div>
+</div>
+
+<div class="main-card" id="mainCard">
+  <div class="loc-tag" id="locTag"></div>
+  <div class="main-row">
+    <div>
+      <div class="big-temp" id="bigTemp"></div>
+      <div class="weather-txt" id="weatherTxt"></div>
+      <div class="feels-txt" id="feelsTxt"></div>
+    </div>
+    <div class="big-emoji" id="bigEmoji"></div>
+  </div>
+</div>
+
+<div class="info-grid" id="infoGrid">
+  <div class="info-box"><div class="info-label">💧 습도</div><div class="info-value" id="humidity"></div></div>
+  <div class="info-box"><div class="info-label">💨 바람</div><div class="info-value" id="wind"></div></div>
+  <div class="info-box"><div class="info-label">🌧️ 강수량</div><div class="info-value" id="rain"></div></div>
+  <div class="info-box"><div class="info-label">☀️ 일출/일몰</div><div class="info-value" id="suntime"></div></div>
+</div>
+
+<div class="hourly-card" id="hourlyCard">
+  <div class="section-label">⏱ 시간별 예보</div>
+  <div class="hourly-row" id="hourlyRow"></div>
+</div>
+
+<div class="summary" id="summary"></div>
+
+<div class="empty" id="empty">위 버튼을 눌러서<br/>날씨를 확인해보세요</div>
+
+<div class="footer">Open-Meteo 기상 데이터 · 무료 오픈소스</div>
+
+<script>
+const WEATHER = {
+  0:{t:"맑음",e:"☀️"},1:{t:"대체로 맑음",e:"🌤️"},2:{t:"부분 흐림",e:"⛅"},3:{t:"흐림",e:"☁️"},
+  45:{t:"안개",e:"🌫️"},48:{t:"안개",e:"🌫️"},51:{t:"이슬비",e:"🌦️"},53:{t:"이슬비",e:"🌦️"},
+  55:{t:"이슬비",e:"🌦️"},61:{t:"비",e:"🌧️"},63:{t:"비",e:"🌧️"},65:{t:"강한 비",e:"🌧️"},
+  71:{t:"눈",e:"❄️"},73:{t:"눈",e:"❄️"},75:{t:"강한 눈",e:"❄️"},
+  80:{t:"소나기",e:"🌦️"},81:{t:"소나기",e:"🌦️"},82:{t:"강한 소나기",e:"⛈️"},
+  95:{t:"뇌우",e:"⛈️"},99:{t:"뇌우+우박",e:"⛈️"}
+};
+const wInfo = (code) => WEATHER[code] || {t:"알 수 없음", e:"🌡️"};
+const windDir = (deg) => ["북","북동","동","남동","남","남서","서","북서"][Math.round(deg/45)%8];
+const show = (id) => { document.getElementById(id).style.display = "block"; }
+const showFlex = (id) => { document.getElementById(id).style.display = "grid"; }
+const hide = (id) => { document.getElementById(id).style.display = "none"; }
+const set = (id, v) => { document.getElementById(id).textContent = v; }
+const setHtml = (id, v) => { document.getElementById(id).innerHTML = v; }
+
+function showLoading() {
+  hide("empty"); hide("mainCard"); hide("infoGrid");
+  hide("hourlyCard"); hide("summary"); hide("errorBox");
+  show("spinner");
+}
+function hideLoading() { hide("spinner"); }
+function showError(msg) {
+  hideLoading();
+  set("errorBox", "⚠️ " + msg);
+  show("errorBox");
+}
+
+async function loadLoc(lat, lon, name, sub) {
+  showLoading();
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+      + `&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m`
+      + `&hourly=temperature_2m,precipitation_probability,weather_code`
+      + `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset`
+      + `&timezone=Asia%2FSeoul&forecast_days=1`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("날씨 데이터 오류");
+    const data = await res.json();
+    renderWeather(data, name, sub);
+  } catch(e) {
+    showError(e.message);
+  }
+}
+
+function loadGPS() {
+  if (!navigator.geolocation) { showError("위치 기능을 지원하지 않아요"); return; }
+  document.getElementById("gpsIcon").textContent = "⏳";
+  showLoading();
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      document.getElementById("gpsIcon").textContent = "📍";
+      loadLoc(pos.coords.latitude, pos.coords.longitude, "📍 현재 위치", "GPS");
+    },
+    () => {
+      document.getElementById("gpsIcon").textContent = "📍";
+      showError("위치 권한을 허용해주세요");
+    },
+    { timeout: 10000 }
+  );
+}
+
+function renderWeather(data, name, sub) {
+  hideLoading();
+  const c = data.current;
+  const d = data.daily;
+  const h = data.hourly;
+  const wi = wInfo(c.weather_code);
+  const nowH = new Date().getHours();
+  const maxT = Math.round(d.temperature_2m_max[0]);
+  const minT = Math.round(d.temperature_2m_min[0]);
+  const rainSum = d.precipitation_sum[0];
+
+  // 메인 카드
+  set("locTag", `${name} · ${sub}`);
+  set("bigTemp", Math.round(c.temperature_2m) + "°");
+  set("weatherTxt", wi.t);
+  set("feelsTxt", `체감 ${Math.round(c.apparent_temperature)}° · 최고 ${maxT}° / 최저 ${minT}°`);
+  set("bigEmoji", wi.e);
+  show("mainCard");
+
+  // 상세 정보
+  set("humidity", c.relative_humidity_2m + "%");
+  set("wind", `${windDir(c.wind_direction_10m)} ${Math.round(c.wind_speed_10m)}km/h`);
+  set("rain", rainSum + "mm");
+  set("suntime", `${d.sunrise[0].slice(11,16)} / ${d.sunset[0].slice(11,16)}`);
+  showFlex("infoGrid");
+
+  // 시간별
+  let hourHtml = "";
+  for (let i = nowH; i < Math.min(nowH + 7, 24); i++) {
+    const wi2 = wInfo(h.weather_code[i]);
+    const rain = h.precipitation_probability[i];
+    hourHtml += `
+      <div class="hour-item">
+        <div class="hour-label">${i === nowH ? "지금" : i+"시"}</div>
+        <div class="hour-emoji">${wi2.e}</div>
+        <div class="hour-temp">${Math.round(h.temperature_2m[i])}°</div>
+        ${rain > 0 ? `<div class="hour-rain">${rain}%</div>` : ""}
+      </div>`;
+  }
+  setHtml("hourlyRow", hourHtml);
+  show("hourlyCard");
+
+  // 한줄 요약
+  let msg = "";
+  if (rainSum > 5)       msg = `☂️ 오늘 비가 ${rainSum}mm 예상돼요. 우산 챙기세요!`;
+  else if (rainSum > 0)  msg = `🌂 오늘 약한 비 ${rainSum}mm. 우산 있으면 좋아요.`;
+  else if (maxT >= 30)   msg = `🥵 오늘 최고 ${maxT}°로 더워요. 수분 보충 잊지 마세요!`;
+  else if (minT <= 0)    msg = `🧊 오늘 최저 ${minT}°로 추워요. 따뜻하게 입으세요!`;
+  else if (maxT >= 25)   msg = `😅 오늘 ${maxT}°로 따뜻해요. 가볍게 입으세요.`;
+  else                   msg = `✅ 오늘 날씨 쾌적해요. 최고 ${maxT}° / 최저 ${minT}°`;
+  set("summary", msg);
+  show("summary");
+}
+</script>
+</body>
+</html>
