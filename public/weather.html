@@ -216,9 +216,21 @@ function loadGPS() {
   document.getElementById("gpsIcon").textContent = "⏳";
   showLoading();
   navigator.geolocation.getCurrentPosition(
-    (pos) => {
+    async (pos) => {
       document.getElementById("gpsIcon").textContent = "📍";
-      loadLoc(pos.coords.latitude, pos.coords.longitude, "📍 현재 위치", "GPS");
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      // 좌표 → 지역명 변환
+      let locName = "현재 위치";
+      let locSub = "GPS";
+      try {
+        const geo = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ko`);
+        const geoData = await geo.json();
+        const addr = geoData.address;
+        locName = addr.neighbourhood || addr.suburb || addr.quarter || addr.village || addr.town || addr.city || "현재 위치";
+        locSub = addr.city || addr.county || addr.state || "";
+      } catch(e) {}
+      loadLoc(lat, lon, "📍 " + locName, locSub);
     },
     () => {
       document.getElementById("gpsIcon").textContent = "📍";
