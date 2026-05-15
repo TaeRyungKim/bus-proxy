@@ -228,10 +228,11 @@ async function fetchBus() {
   let list = parseJsonData(JSON.parse(text));
   return list
     .filter(b => isTarget(b.routeName))
-    .sort((a,b) => {
-      const ai = TARGET.findIndex(t => a.routeName.startsWith(t));
-      const bi = TARGET.findIndex(t => b.routeName.startsWith(t));
-      return (ai<0?99:ai)-(bi<0?99:bi);
+    .sort((a, b) => {
+      // 도착 시간 기준 정렬 (null은 맨 뒤로)
+      const aMin = a.min1 != null ? a.min1 : 999;
+      const bMin = b.min1 != null ? b.min1 : 999;
+      return aMin - bMin;
     });
 }
 
