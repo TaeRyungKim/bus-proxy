@@ -12,12 +12,8 @@
       c.width = 180; c.height = 180;
       var ctx = c.getContext("2d");
       ctx.fillStyle = "#0B1A2E";
-      ctx.beginPath();
-      ctx.roundRect(0,0,180,180,36);
-      ctx.fill();
-      ctx.font = "110px serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
+      ctx.beginPath(); ctx.roundRect(0,0,180,180,36); ctx.fill();
+      ctx.font = "110px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText("🌤️", 90, 95);
       var link = document.createElement("link");
       link.rel = "apple-touch-icon";
@@ -38,7 +34,7 @@
     .loc-btn {
       background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
       border-radius: 14px; padding: 12px 8px; cursor: pointer; text-align: center;
-      transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+      -webkit-tap-highlight-color: transparent; transition: all 0.15s;
     }
     .loc-btn:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
     .loc-icon { font-size: 20px; margin-bottom: 4px; }
@@ -72,7 +68,7 @@
       background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: none;
     }
-    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; display: none; }
+    .info-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; display: none; }
     .info-box {
       background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px; padding: 12px 14px;
@@ -80,14 +76,14 @@
     .info-label { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 5px; }
     .info-value { font-size: 15px; font-weight: 700; }
     .section-label {
-      font-size: 11px; color: rgba(255,255,255,0.35); font-weight: 600;
-      letter-spacing: 0.5px; margin-bottom: 12px;
+      font-size: 11px; color: rgba(255,255,255,0.35);
+      font-weight: 600; letter-spacing: 0.5px; margin-bottom: 12px;
     }
-    .hourly-row { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
+    .hourly-row { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 4px; }
     .hour-item { text-align: center; flex-shrink: 0; }
     .hour-label { font-size: 10px; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
     .hour-emoji { font-size: 18px; margin-bottom: 4px; }
-    .hour-temp { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .hour-temp { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
     .hour-rain { font-size: 10px; color: #60A5FA; }
     .dust-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .summary {
@@ -95,17 +91,14 @@
       border-radius: 12px; padding: 12px 14px; font-size: 12px;
       color: rgba(255,255,255,0.5); line-height: 1.8; display: none;
     }
-    .empty {
-      text-align: center; padding: 48px 0;
-      color: rgba(255,255,255,0.2); font-size: 14px; line-height: 2;
-    }
+    .empty { text-align: center; padding: 48px 0; color: rgba(255,255,255,0.2); font-size: 14px; line-height: 2; }
     .footer { margin-top: 24px; text-align: center; font-size: 10px; color: rgba(255,255,255,0.13); line-height: 2; }
   </style>
 </head>
 <body>
 
 <div class="title">🌤️ 날씨</div>
-<div class="subtitle">오늘 하루 날씨를 확인해보세요</div>
+<div class="subtitle">기상청 공식 데이터 · 오늘 하루 날씨</div>
 
 <div class="loc-grid">
   <div class="loc-btn" onclick="loadGPS()">
@@ -113,12 +106,12 @@
     <div class="loc-label">현재 위치</div>
     <div class="loc-sub">GPS</div>
   </div>
-  <div class="loc-btn" onclick="loadLoc(37.4023,127.1080,'🏢 삼평동','판교테크노밸리')">
+  <div class="loc-btn" onclick="loadLoc(63,125,'🏢 삼평동','판교테크노밸리')">
     <div class="loc-icon">🏢</div>
     <div class="loc-label">회사</div>
     <div class="loc-sub">삼평동</div>
   </div>
-  <div class="loc-btn" onclick="loadLoc(37.4969,127.1480,'🏠 마천동','송파구')">
+  <div class="loc-btn" onclick="loadLoc(62,125,'🏠 마천동','송파구')">
     <div class="loc-icon">🏠</div>
     <div class="loc-label">집</div>
     <div class="loc-sub">마천동</div>
@@ -131,7 +124,6 @@
   <div class="spinner-txt">날씨 불러오는 중…</div>
 </div>
 
-<!-- 메인 카드 -->
 <div class="main-card" id="mainCard">
   <div class="loc-tag" id="locTag"></div>
   <div class="main-row">
@@ -144,15 +136,14 @@
   </div>
 </div>
 
-<!-- 상세 정보 -->
-<div class="info-grid" id="infoGrid">
+<div class="info-grid-2" id="infoGrid">
   <div class="info-box"><div class="info-label">💧 습도</div><div class="info-value" id="humidity"></div></div>
   <div class="info-box"><div class="info-label">💨 바람</div><div class="info-value" id="wind"></div></div>
-  <div class="info-box"><div class="info-label">🌧️ 강수량</div><div class="info-value" id="rain"></div></div>
-  <div class="info-box"><div class="info-label">☀️ 일출/일몰</div><div class="info-value" id="suntime"></div></div>
+  <div class="info-box"><div class="info-label">🌧️ 강수확률</div><div class="info-value" id="rain"></div></div>
+  <div class="info-box"><div class="info-label">🌡️ 최고/최저</div><div class="info-value" id="minmax"></div></div>
 </div>
 
-<!-- 미세먼지 -->
+<!-- 미세먼지 (Open-Meteo) -->
 <div class="card" id="dustCard">
   <div class="section-label">🌫️ 미세먼지</div>
   <div class="dust-grid" id="dustGrid"></div>
@@ -164,29 +155,28 @@
   <div class="hourly-row" id="hourlyRow"></div>
 </div>
 
-<!-- 한줄 요약 -->
 <div class="summary" id="summary"></div>
-
 <div class="empty" id="empty">위 버튼을 눌러서<br/>날씨를 확인해보세요</div>
-
-<div class="footer">Open-Meteo 기상 데이터 · 무료 오픈소스</div>
+<div class="footer">기상청 단기예보 · 미세먼지 Open-Meteo</div>
 
 <script>
-const WEATHER = {
-  0:{t:"맑음",e:"☀️"},1:{t:"대체로 맑음",e:"🌤️"},2:{t:"부분 흐림",e:"⛅"},3:{t:"흐림",e:"☁️"},
-  45:{t:"안개",e:"🌫️"},48:{t:"안개",e:"🌫️"},51:{t:"이슬비",e:"🌦️"},53:{t:"이슬비",e:"🌦️"},
-  55:{t:"이슬비",e:"🌦️"},61:{t:"비",e:"🌧️"},63:{t:"비",e:"🌧️"},65:{t:"강한 비",e:"🌧️"},
-  71:{t:"눈",e:"❄️"},73:{t:"눈",e:"❄️"},75:{t:"강한 눈",e:"❄️"},
-  80:{t:"소나기",e:"🌦️"},81:{t:"소나기",e:"🌦️"},82:{t:"강한 소나기",e:"⛈️"},
-  95:{t:"뇌우",e:"⛈️"},99:{t:"뇌우+우박",e:"⛈️"}
-};
-const wInfo  = (code) => WEATHER[code] || {t:"알 수 없음",e:"🌡️"};
-const windDir = (deg) => ["북","북동","동","남동","남","남서","서","북서"][Math.round(deg/45)%8];
-const show   = (id) => document.getElementById(id).style.display = "block";
-const showG  = (id) => document.getElementById(id).style.display = "grid";
-const hide   = (id) => document.getElementById(id).style.display = "none";
-const set    = (id,v) => document.getElementById(id).textContent = v;
-const setH   = (id,v) => document.getElementById(id).innerHTML = v;
+// 기상청 SKY/PTY 코드 → 날씨 텍스트/이모지
+function getSkyInfo(sky, pty) {
+  if (pty === "1") return {t:"비",        e:"🌧️"};
+  if (pty === "2") return {t:"비/눈",     e:"🌨️"};
+  if (pty === "3") return {t:"눈",        e:"❄️"};
+  if (pty === "4") return {t:"소나기",    e:"🌦️"};
+  if (sky === "1") return {t:"맑음",      e:"☀️"};
+  if (sky === "3") return {t:"구름많음",  e:"⛅"};
+  if (sky === "4") return {t:"흐림",      e:"☁️"};
+  return {t:"알 수 없음", e:"🌡️"};
+}
+const windDir = (deg) => ["북","북동","동","남동","남","남서","서","북서"][Math.round(Number(deg)/45)%8];
+const show  = (id) => document.getElementById(id).style.display = "block";
+const showG = (id) => document.getElementById(id).style.display = "grid";
+const hide  = (id) => document.getElementById(id).style.display = "none";
+const set   = (id,v) => document.getElementById(id).textContent = v;
+const setH  = (id,v) => document.getElementById(id).innerHTML = v;
 
 function showLoading() {
   hide("empty"); hide("mainCard"); hide("infoGrid"); hide("dustCard");
@@ -196,22 +186,51 @@ function showLoading() {
 function hideLoading() { hide("spinner"); }
 function showError(msg) { hideLoading(); set("errorBox","⚠️ "+msg); show("errorBox"); }
 
-async function loadLoc(lat, lon, name, sub) {
+// 위도/경도 → 기상청 격자 변환
+function latLonToGrid(lat, lon) {
+  const RE = 6371.00877, GRID = 5.0, SLAT1 = 30.0, SLAT2 = 60.0;
+  const OLON = 126.0, OLAT = 38.0, XO = 43, YO = 136;
+  const DEGRAD = Math.PI / 180.0;
+  const re = RE / GRID, slat1 = SLAT1 * DEGRAD, slat2 = SLAT2 * DEGRAD;
+  const olon = OLON * DEGRAD, olat = OLAT * DEGRAD;
+  let sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+  sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
+  let sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
+  sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
+  let ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
+  ro = re * sf / Math.pow(ro, sn);
+  let ra = Math.tan(Math.PI * 0.25 + lat * DEGRAD * 0.5);
+  ra = re * sf / Math.pow(ra, sn);
+  let theta = lon * DEGRAD - olon;
+  if (theta > Math.PI) theta -= 2.0 * Math.PI;
+  if (theta < -Math.PI) theta += 2.0 * Math.PI;
+  theta *= sn;
+  return {
+    nx: Math.floor(ra * Math.sin(theta) + XO + 0.5),
+    ny: Math.floor(ro - ra * Math.cos(theta) + YO + 0.5)
+  };
+}
+
+async function loadLoc(nx, ny, name, sub, lat, lon) {
   showLoading();
   try {
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
-      + `&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_direction_10m`
-      + `&hourly=temperature_2m,precipitation_probability,weather_code`
-      + `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset`
-      + `&timezone=Asia%2FSeoul&forecast_days=1`;
-    const airUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}`
-      + `&current=pm10,pm2_5`;
-
-    const [wRes, aRes] = await Promise.all([fetch(weatherUrl), fetch(airUrl)]);
+    // 기상청 API (Vercel 프록시 통해서)
+    const wRes = await fetch(`/api/weather?nx=${nx}&ny=${ny}`);
     if (!wRes.ok) throw new Error("날씨 데이터 오류");
     const wData = await wRes.json();
-    const aData = aRes.ok ? await aRes.json() : null;
-    renderWeather(wData, aData, name, sub);
+    const items = wData?.response?.body?.items?.item;
+    if (!items) throw new Error("날씨 데이터가 없어요");
+
+    // 미세먼지는 Open-Meteo (CORS 없음)
+    let aData = null;
+    if (lat && lon) {
+      try {
+        const aRes = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm10,pm2_5`);
+        if (aRes.ok) aData = await aRes.json();
+      } catch(e) {}
+    }
+
+    renderWeather(items, aData, name, sub);
   } catch(e) {
     showError(e.message);
   }
@@ -226,20 +245,19 @@ async function loadGPS() {
       document.getElementById("gpsIcon").textContent = "📍";
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
-      // 역지오코딩: 좌표 → 동네 이름
-      let locName = "현재 위치";
-      let locSub  = "GPS";
+      const grid = latLonToGrid(lat, lon);
+
+      // 역지오코딩
+      let locName = "현재 위치", locSub = "GPS";
       try {
-        const geoRes = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ko`
-        );
+        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ko`);
         const geoData = await geoRes.json();
         const addr = geoData.address;
-        locName = addr.neighbourhood || addr.suburb || addr.quarter
-               || addr.village || addr.town || addr.city || "현재 위치";
+        locName = addr.neighbourhood || addr.suburb || addr.quarter || addr.village || addr.town || addr.city || "현재 위치";
         locSub  = addr.city || addr.county || addr.state || "";
       } catch(e) {}
-      loadLoc(lat, lon, "📍 " + locName, locSub);
+
+      loadLoc(grid.nx, grid.ny, "📍 " + locName, locSub, lat, lon);
     },
     () => {
       document.getElementById("gpsIcon").textContent = "📍";
@@ -250,51 +268,61 @@ async function loadGPS() {
 }
 
 function dustLevel(pm, type) {
-  if (type === "pm10") {
-    if (pm <= 30)  return {t:"좋음",    e:"😊", c:"#22C55E"};
-    if (pm <= 80)  return {t:"보통",    e:"🙂", c:"#EAB308"};
-    if (pm <= 150) return {t:"나쁨",    e:"😷", c:"#F97316"};
-    return             {t:"매우나쁨", e:"🤢", c:"#EF4444"};
-  } else {
-    if (pm <= 15)  return {t:"좋음",    e:"😊", c:"#22C55E"};
-    if (pm <= 35)  return {t:"보통",    e:"🙂", c:"#EAB308"};
-    if (pm <= 75)  return {t:"나쁨",    e:"😷", c:"#F97316"};
-    return             {t:"매우나쁨", e:"🤢", c:"#EF4444"};
-  }
+  const thresholds = type === "pm10"
+    ? [{v:30,t:"좋음",e:"😊",c:"#22C55E"},{v:80,t:"보통",e:"🙂",c:"#EAB308"},{v:150,t:"나쁨",e:"😷",c:"#F97316"}]
+    : [{v:15,t:"좋음",e:"😊",c:"#22C55E"},{v:35,t:"보통",e:"🙂",c:"#EAB308"},{v:75,t:"나쁨",e:"😷",c:"#F97316"}];
+  for (const th of thresholds) { if (pm <= th.v) return th; }
+  return {t:"매우나쁨",e:"🤢",c:"#EF4444"};
 }
 
-function renderWeather(wData, aData, name, sub) {
+function renderWeather(items, aData, name, sub) {
   hideLoading();
-  const c  = wData.current;
-  const d  = wData.daily;
-  const h  = wData.hourly;
-  const wi = wInfo(c.weather_code);
-  const nowH  = new Date().getHours();
-  const maxT  = Math.round(d.temperature_2m_max[0]);
-  const minT  = Math.round(d.temperature_2m_min[0]);
-  const rainSum = d.precipitation_sum[0];
+
+  // 기상청 데이터 파싱 - fcstTime 기준으로 맵 구성
+  const now = new Date(new Date().toLocaleString("en-US", {timeZone:"Asia/Seoul"}));
+  const nowHHMM = String(now.getHours()).padStart(2,"0") + "00";
+  const byTime = {};
+  let maxTemp = null, minTemp = null;
+
+  for (const item of items) {
+    const key = item.fcstDate + item.fcstTime;
+    if (!byTime[key]) byTime[key] = { date: item.fcstDate, time: item.fcstTime };
+    byTime[key][item.category] = item.fcstValue;
+    if (item.category === "TMX") maxTemp = item.fcstValue;
+    if (item.category === "TMN") minTemp = item.fcstValue;
+  }
+
+  // 현재 시각 데이터
+  const todayStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}`;
+  const currentKey = todayStr + nowHHMM;
+  const current = byTime[currentKey] || Object.values(byTime)[0];
+  const wi = getSkyInfo(current?.SKY, current?.PTY);
 
   // 메인 카드
-  set("locTag",     `${name} · ${sub}`);
-  set("bigTemp",    Math.round(c.temperature_2m) + "°");
+  set("locTag", `${name} · ${sub}`);
+  set("bigTemp", Math.round(Number(current?.TMP || 0)) + "°");
   set("weatherTxt", wi.t);
-  set("feelsTxt",   `체감 ${Math.round(c.apparent_temperature)}° · 최고 ${maxT}° / 최저 ${minT}°`);
-  set("bigEmoji",   wi.e);
+  const maxT = maxTemp ? Math.round(Number(maxTemp)) : "-";
+  const minT = minTemp ? Math.round(Number(minTemp)) : "-";
+  set("feelsTxt", `최고 ${maxT}° / 최저 ${minT}°`);
+  set("bigEmoji", wi.e);
   show("mainCard");
 
   // 상세 정보
-  set("humidity", c.relative_humidity_2m + "%");
-  set("wind",     `${windDir(c.wind_direction_10m)} ${Math.round(c.wind_speed_10m)}km/h`);
-  set("rain",     rainSum + "mm");
-  set("suntime",  `${d.sunrise[0].slice(11,16)} / ${d.sunset[0].slice(11,16)}`);
+  set("humidity", (current?.REH || "-") + "%");
+  const wsdNum = Number(current?.WSD || 0);
+  const vecNum = Number(current?.VEC || 0);
+  set("wind", `${windDir(vecNum)} ${wsdNum.toFixed(1)}m/s`);
+  set("rain", (current?.POP || "-") + "%");
+  set("minmax", `${maxT}° / ${minT}°`);
   showG("infoGrid");
 
   // 미세먼지
   if (aData && aData.current) {
     const pm10 = Math.round(aData.current.pm10);
     const pm25 = Math.round(aData.current.pm2_5);
-    const d10  = dustLevel(pm10, "pm10");
-    const d25  = dustLevel(pm25, "pm25");
+    const d10 = dustLevel(pm10, "pm10");
+    const d25 = dustLevel(pm25, "pm25");
     setH("dustGrid", `
       <div class="info-box">
         <div class="info-label">PM10 미세먼지</div>
@@ -319,29 +347,38 @@ function renderWeather(wData, aData, name, sub) {
     show("dustCard");
   }
 
-  // 시간별 예보
+  // 시간별 예보 (현재~+6시간)
+  const sortedKeys = Object.keys(byTime)
+    .filter(k => k.startsWith(todayStr))
+    .sort();
+  const currentIdx = sortedKeys.indexOf(currentKey);
+  const hourKeys = sortedKeys.slice(currentIdx >= 0 ? currentIdx : 0, (currentIdx >= 0 ? currentIdx : 0) + 7);
+
   let hourHtml = "";
-  for (let i = nowH; i < Math.min(nowH + 7, 24); i++) {
-    const wi2  = wInfo(h.weather_code[i]);
-    const rain = h.precipitation_probability[i];
+  hourKeys.forEach((key, i) => {
+    const d = byTime[key];
+    const wi2 = getSkyInfo(d?.SKY, d?.PTY);
+    const pop = d?.POP || 0;
+    const hour = d.time.slice(0,2);
     hourHtml += `
       <div class="hour-item">
-        <div class="hour-label">${i === nowH ? "지금" : i+"시"}</div>
+        <div class="hour-label">${i === 0 ? "지금" : hour+"시"}</div>
         <div class="hour-emoji">${wi2.e}</div>
-        <div class="hour-temp">${Math.round(h.temperature_2m[i])}°</div>
-        ${rain > 0 ? `<div class="hour-rain">${rain}%</div>` : ""}
+        <div class="hour-temp">${Math.round(Number(d?.TMP||0))}°</div>
+        ${Number(pop) > 0 ? `<div class="hour-rain">${pop}%</div>` : ""}
       </div>`;
-  }
+  });
   setH("hourlyRow", hourHtml);
   show("hourlyCard");
 
   // 한줄 요약
+  const pop = Number(current?.POP || 0);
   let msg = "";
-  if      (rainSum > 5)  msg = `☂️ 오늘 비가 ${rainSum}mm 예상돼요. 우산 챙기세요!`;
-  else if (rainSum > 0)  msg = `🌂 오늘 약한 비 ${rainSum}mm. 우산 있으면 좋아요.`;
-  else if (maxT >= 30)   msg = `🥵 오늘 최고 ${maxT}°로 더워요. 수분 보충 잊지 마세요!`;
-  else if (minT <= 0)    msg = `🧊 오늘 최저 ${minT}°로 추워요. 따뜻하게 입으세요!`;
-  else if (maxT >= 25)   msg = `😅 오늘 ${maxT}°로 따뜻해요. 가볍게 입으세요.`;
+  if (pop >= 60)         msg = `☂️ 강수확률 ${pop}%. 우산 꼭 챙기세요!`;
+  else if (pop >= 30)    msg = `🌂 강수확률 ${pop}%. 우산 챙기면 좋아요.`;
+  else if (maxT >= 30)   msg = `🥵 최고 ${maxT}°로 더워요. 수분 보충 잊지 마세요!`;
+  else if (minT <= 0)    msg = `🧊 최저 ${minT}°로 추워요. 따뜻하게 입으세요!`;
+  else if (maxT >= 25)   msg = `😅 ${maxT}°로 따뜻해요. 가볍게 입으세요.`;
   else                   msg = `✅ 오늘 날씨 쾌적해요. 최고 ${maxT}° / 최저 ${minT}°`;
   set("summary", msg);
   show("summary");
