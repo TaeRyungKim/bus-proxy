@@ -419,13 +419,12 @@ async function openRoute(idx) {
     const res = await fetch(`/api/route?routeId=${bus.routeId}`);
     if (!res.ok) throw new Error("노선 정보 오류");
     const data = await res.json();
-    let stations = data?.response?.msgBody?.busRouteStationList ?? [];
 
+    let stations = data?.response?.msgBody?.busRouteStationList ?? [];
     if (!Array.isArray(stations)) stations = [stations];
     if (stations.length === 0) throw new Error("정류장 정보 없음");
 
     renderRouteMap(stations, bus, color);
-
   } catch(e) {
     document.getElementById("modalBody").innerHTML =
       `<div class="modal-loading" style="color:#FCA5A5">⚠️ ${e.message}</div>`;
