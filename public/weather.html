@@ -68,7 +68,7 @@
       background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 16px; padding: 14px 16px; margin-bottom: 12px; display: none;
     }
-    .info-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; display: none; }
+    .info-grid-2 { display: none; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .info-box {
       background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px; padding: 12px 14px;
@@ -106,12 +106,12 @@
     <div class="loc-label">현재 위치</div>
     <div class="loc-sub">GPS</div>
   </div>
-  <div class="loc-btn" onclick="loadLoc(63,125,'🏢 삼평동','판교테크노밸리')">
+  <div class="loc-btn" onclick="loadLoc(63,125,'🏢 삼평동','판교테크노밸리',37.4023,127.1080)">
     <div class="loc-icon">🏢</div>
     <div class="loc-label">회사</div>
     <div class="loc-sub">삼평동</div>
   </div>
-  <div class="loc-btn" onclick="loadLoc(62,125,'🏠 마천동','송파구')">
+  <div class="loc-btn" onclick="loadLoc(62,125,'🏠 마천동','송파구',37.4969,127.1480)">
     <div class="loc-icon">🏠</div>
     <div class="loc-label">집</div>
     <div class="loc-sub">마천동</div>
@@ -143,13 +143,11 @@
   <div class="info-box"><div class="info-label">🌡️ 최고/최저</div><div class="info-value" id="minmax"></div></div>
 </div>
 
-<!-- 미세먼지 (Open-Meteo) -->
 <div class="card" id="dustCard">
   <div class="section-label">🌫️ 미세먼지</div>
   <div class="dust-grid" id="dustGrid"></div>
 </div>
 
-<!-- 시간별 예보 -->
 <div class="card" id="hourlyCard">
   <div class="section-label">⏱ 시간별 예보</div>
   <div class="hourly-row" id="hourlyRow"></div>
@@ -160,15 +158,14 @@
 <div class="footer">기상청 단기예보 · 미세먼지 Open-Meteo</div>
 
 <script>
-// 기상청 SKY/PTY 코드 → 날씨 텍스트/이모지
 function getSkyInfo(sky, pty) {
-  if (pty === "1") return {t:"비",        e:"🌧️"};
-  if (pty === "2") return {t:"비/눈",     e:"🌨️"};
-  if (pty === "3") return {t:"눈",        e:"❄️"};
-  if (pty === "4") return {t:"소나기",    e:"🌦️"};
-  if (sky === "1") return {t:"맑음",      e:"☀️"};
-  if (sky === "3") return {t:"구름많음",  e:"⛅"};
-  if (sky === "4") return {t:"흐림",      e:"☁️"};
+  if (pty === "1") return {t:"비",       e:"🌧️"};
+  if (pty === "2") return {t:"비/눈",    e:"🌨️"};
+  if (pty === "3") return {t:"눈",       e:"❄️"};
+  if (pty === "4") return {t:"소나기",   e:"🌦️"};
+  if (sky === "1") return {t:"맑음",     e:"☀️"};
+  if (sky === "3") return {t:"구름많음", e:"⛅"};
+  if (sky === "4") return {t:"흐림",     e:"☁️"};
   return {t:"알 수 없음", e:"🌡️"};
 }
 const windDir = (deg) => ["북","북동","동","남동","남","남서","서","북서"][Math.round(Number(deg)/45)%8];
@@ -186,42 +183,37 @@ function showLoading() {
 function hideLoading() { hide("spinner"); }
 function showError(msg) { hideLoading(); set("errorBox","⚠️ "+msg); show("errorBox"); }
 
-// 위도/경도 → 기상청 격자 변환
 function latLonToGrid(lat, lon) {
-  const RE = 6371.00877, GRID = 5.0, SLAT1 = 30.0, SLAT2 = 60.0;
-  const OLON = 126.0, OLAT = 38.0, XO = 43, YO = 136;
-  const DEGRAD = Math.PI / 180.0;
-  const re = RE / GRID, slat1 = SLAT1 * DEGRAD, slat2 = SLAT2 * DEGRAD;
-  const olon = OLON * DEGRAD, olat = OLAT * DEGRAD;
-  let sn = Math.tan(Math.PI * 0.25 + slat2 * 0.5) / Math.tan(Math.PI * 0.25 + slat1 * 0.5);
-  sn = Math.log(Math.cos(slat1) / Math.cos(slat2)) / Math.log(sn);
-  let sf = Math.tan(Math.PI * 0.25 + slat1 * 0.5);
-  sf = Math.pow(sf, sn) * Math.cos(slat1) / sn;
-  let ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
-  ro = re * sf / Math.pow(ro, sn);
-  let ra = Math.tan(Math.PI * 0.25 + lat * DEGRAD * 0.5);
-  ra = re * sf / Math.pow(ra, sn);
-  let theta = lon * DEGRAD - olon;
-  if (theta > Math.PI) theta -= 2.0 * Math.PI;
-  if (theta < -Math.PI) theta += 2.0 * Math.PI;
-  theta *= sn;
+  const RE=6371.00877,GRID=5.0,SLAT1=30.0,SLAT2=60.0,OLON=126.0,OLAT=38.0,XO=43,YO=136;
+  const DEGRAD=Math.PI/180.0;
+  const re=RE/GRID,slat1=SLAT1*DEGRAD,slat2=SLAT2*DEGRAD,olon=OLON*DEGRAD,olat=OLAT*DEGRAD;
+  let sn=Math.tan(Math.PI*0.25+slat2*0.5)/Math.tan(Math.PI*0.25+slat1*0.5);
+  sn=Math.log(Math.cos(slat1)/Math.cos(slat2))/Math.log(sn);
+  let sf=Math.tan(Math.PI*0.25+slat1*0.5);
+  sf=Math.pow(sf,sn)*Math.cos(slat1)/sn;
+  let ro=Math.tan(Math.PI*0.25+olat*0.5);
+  ro=re*sf/Math.pow(ro,sn);
+  let ra=Math.tan(Math.PI*0.25+lat*DEGRAD*0.5);
+  ra=re*sf/Math.pow(ra,sn);
+  let theta=lon*DEGRAD-olon;
+  if(theta>Math.PI)theta-=2.0*Math.PI;
+  if(theta<-Math.PI)theta+=2.0*Math.PI;
+  theta*=sn;
   return {
-    nx: Math.floor(ra * Math.sin(theta) + XO + 0.5),
-    ny: Math.floor(ro - ra * Math.cos(theta) + YO + 0.5)
+    nx:Math.floor(ra*Math.sin(theta)+XO+0.5),
+    ny:Math.floor(ro-ra*Math.cos(theta)+YO+0.5)
   };
 }
 
 async function loadLoc(nx, ny, name, sub, lat, lon) {
   showLoading();
   try {
-    // 기상청 API (Vercel 프록시 통해서)
     const wRes = await fetch(`/api/weather?nx=${nx}&ny=${ny}`);
     if (!wRes.ok) throw new Error("날씨 데이터 오류");
     const wData = await wRes.json();
     const items = wData?.response?.body?.items?.item;
     if (!items) throw new Error("날씨 데이터가 없어요");
 
-    // 미세먼지는 Open-Meteo (CORS 없음)
     let aData = null;
     if (lat && lon) {
       try {
@@ -230,7 +222,7 @@ async function loadLoc(nx, ny, name, sub, lat, lon) {
       } catch(e) {}
     }
 
-    renderWeather(items, aData, name, sub);
+    renderWeather(items, wData, aData, name, sub);
   } catch(e) {
     showError(e.message);
   }
@@ -246,8 +238,6 @@ async function loadGPS() {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
       const grid = latLonToGrid(lat, lon);
-
-      // 역지오코딩
       let locName = "현재 위치", locSub = "GPS";
       try {
         const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ko`);
@@ -256,7 +246,6 @@ async function loadGPS() {
         locName = addr.neighbourhood || addr.suburb || addr.quarter || addr.village || addr.town || addr.city || "현재 위치";
         locSub  = addr.city || addr.county || addr.state || "";
       } catch(e) {}
-
       loadLoc(grid.nx, grid.ny, "📍 " + locName, locSub, lat, lon);
     },
     () => {
@@ -268,61 +257,59 @@ async function loadGPS() {
 }
 
 function dustLevel(pm, type) {
-  const thresholds = type === "pm10"
+  const t = type === "pm10"
     ? [{v:30,t:"좋음",e:"😊",c:"#22C55E"},{v:80,t:"보통",e:"🙂",c:"#EAB308"},{v:150,t:"나쁨",e:"😷",c:"#F97316"}]
     : [{v:15,t:"좋음",e:"😊",c:"#22C55E"},{v:35,t:"보통",e:"🙂",c:"#EAB308"},{v:75,t:"나쁨",e:"😷",c:"#F97316"}];
-  for (const th of thresholds) { if (pm <= th.v) return th; }
+  for (const th of t) { if (pm <= th.v) return th; }
   return {t:"매우나쁨",e:"🤢",c:"#EF4444"};
 }
 
-function renderWeather(items, aData, name, sub) {
+function renderWeather(items, wData, aData, name, sub) {
   hideLoading();
 
-  // 기상청 데이터 파싱 - fcstTime 기준으로 맵 구성
   const now = new Date(new Date().toLocaleString("en-US", {timeZone:"Asia/Seoul"}));
-  const nowHHMM = String(now.getHours()).padStart(2,"0") + "00";
-  const byTime = {};
-  let maxTemp = null, minTemp = null;
+  const pad = (n) => String(n).padStart(2,"0");
+  const todayStr = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
+  const nowHHMM  = pad(now.getHours()) + "00";
 
+  // 시간별 데이터 맵 구성
+  const byTime = {};
   for (const item of items) {
     const key = item.fcstDate + item.fcstTime;
     if (!byTime[key]) byTime[key] = { date: item.fcstDate, time: item.fcstTime };
     byTime[key][item.category] = item.fcstValue;
-    if (item.category === "TMX") maxTemp = item.fcstValue;
-    if (item.category === "TMN") minTemp = item.fcstValue;
   }
 
+  // ✅ 서버에서 계산된 최고/최저 사용 (오늘 TMP 전체 기준)
+  const maxT = wData.calcMax != null ? Math.round(wData.calcMax) : "-";
+  const minT = wData.calcMin != null ? Math.round(wData.calcMin) : "-";
+
   // 현재 시각 데이터
-  const todayStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}`;
   const currentKey = todayStr + nowHHMM;
-  const current = byTime[currentKey] || Object.values(byTime)[0];
+  const current = byTime[currentKey] || Object.values(byTime).find(v => v.date === todayStr) || Object.values(byTime)[0];
   const wi = getSkyInfo(current?.SKY, current?.PTY);
 
   // 메인 카드
-  set("locTag", `${name} · ${sub}`);
-  set("bigTemp", Math.round(Number(current?.TMP || 0)) + "°");
+  set("locTag",     `${name} · ${sub}`);
+  set("bigTemp",    Math.round(Number(current?.TMP || 0)) + "°");
   set("weatherTxt", wi.t);
-  const maxT = maxTemp ? Math.round(Number(maxTemp)) : "-";
-  const minT = minTemp ? Math.round(Number(minTemp)) : "-";
-  set("feelsTxt", `최고 ${maxT}° / 최저 ${minT}°`);
-  set("bigEmoji", wi.e);
+  set("feelsTxt",   `최고 ${maxT}° / 최저 ${minT}°`);
+  set("bigEmoji",   wi.e);
   show("mainCard");
 
   // 상세 정보
   set("humidity", (current?.REH || "-") + "%");
-  const wsdNum = Number(current?.WSD || 0);
-  const vecNum = Number(current?.VEC || 0);
-  set("wind", `${windDir(vecNum)} ${wsdNum.toFixed(1)}m/s`);
-  set("rain", (current?.POP || "-") + "%");
-  set("minmax", `${maxT}° / ${minT}°`);
+  set("wind",     `${windDir(current?.VEC || 0)} ${Number(current?.WSD || 0).toFixed(1)}m/s`);
+  set("rain",     (current?.POP || "-") + "%");
+  set("minmax",   `${maxT}° / ${minT}°`);
   showG("infoGrid");
 
   // 미세먼지
   if (aData && aData.current) {
     const pm10 = Math.round(aData.current.pm10);
     const pm25 = Math.round(aData.current.pm2_5);
-    const d10 = dustLevel(pm10, "pm10");
-    const d25 = dustLevel(pm25, "pm25");
+    const d10  = dustLevel(pm10, "pm10");
+    const d25  = dustLevel(pm25, "pm25");
     setH("dustGrid", `
       <div class="info-box">
         <div class="info-label">PM10 미세먼지</div>
@@ -347,25 +334,23 @@ function renderWeather(items, aData, name, sub) {
     show("dustCard");
   }
 
-  // 시간별 예보 (현재~+6시간)
-  const sortedKeys = Object.keys(byTime)
-    .filter(k => k.startsWith(todayStr))
-    .sort();
-  const currentIdx = sortedKeys.indexOf(currentKey);
-  const hourKeys = sortedKeys.slice(currentIdx >= 0 ? currentIdx : 0, (currentIdx >= 0 ? currentIdx : 0) + 7);
+  // 시간별 예보 (오늘 현재~이후)
+  const sortedKeys = Object.keys(byTime).filter(k => k.startsWith(todayStr)).sort();
+  const curIdx = sortedKeys.findIndex(k => k >= todayStr + nowHHMM);
+  const hourKeys = sortedKeys.slice(curIdx >= 0 ? curIdx : 0, (curIdx >= 0 ? curIdx : 0) + 8);
 
   let hourHtml = "";
   hourKeys.forEach((key, i) => {
-    const d = byTime[key];
+    const d   = byTime[key];
     const wi2 = getSkyInfo(d?.SKY, d?.PTY);
-    const pop = d?.POP || 0;
+    const pop = Number(d?.POP || 0);
     const hour = d.time.slice(0,2);
     hourHtml += `
       <div class="hour-item">
         <div class="hour-label">${i === 0 ? "지금" : hour+"시"}</div>
         <div class="hour-emoji">${wi2.e}</div>
         <div class="hour-temp">${Math.round(Number(d?.TMP||0))}°</div>
-        ${Number(pop) > 0 ? `<div class="hour-rain">${pop}%</div>` : ""}
+        ${pop > 0 ? `<div class="hour-rain">${pop}%</div>` : ""}
       </div>`;
   });
   setH("hourlyRow", hourHtml);
@@ -374,12 +359,12 @@ function renderWeather(items, aData, name, sub) {
   // 한줄 요약
   const pop = Number(current?.POP || 0);
   let msg = "";
-  if (pop >= 60)         msg = `☂️ 강수확률 ${pop}%. 우산 꼭 챙기세요!`;
-  else if (pop >= 30)    msg = `🌂 강수확률 ${pop}%. 우산 챙기면 좋아요.`;
-  else if (maxT >= 30)   msg = `🥵 최고 ${maxT}°로 더워요. 수분 보충 잊지 마세요!`;
-  else if (minT <= 0)    msg = `🧊 최저 ${minT}°로 추워요. 따뜻하게 입으세요!`;
-  else if (maxT >= 25)   msg = `😅 ${maxT}°로 따뜻해요. 가볍게 입으세요.`;
-  else                   msg = `✅ 오늘 날씨 쾌적해요. 최고 ${maxT}° / 최저 ${minT}°`;
+  if      (pop >= 60)       msg = `☂️ 강수확률 ${pop}%. 우산 꼭 챙기세요!`;
+  else if (pop >= 30)       msg = `🌂 강수확률 ${pop}%. 우산 챙기면 좋아요.`;
+  else if (maxT !== "-" && maxT >= 30) msg = `🥵 최고 ${maxT}°로 더워요. 수분 보충 잊지 마세요!`;
+  else if (minT !== "-" && minT <= 0)  msg = `🧊 최저 ${minT}°로 추워요. 따뜻하게 입으세요!`;
+  else if (maxT !== "-" && maxT >= 25) msg = `😅 ${maxT}°로 따뜻해요. 가볍게 입으세요.`;
+  else                      msg = `✅ 오늘 날씨 쾌적해요. 최고 ${maxT}° / 최저 ${minT}°`;
   set("summary", msg);
   show("summary");
 }
