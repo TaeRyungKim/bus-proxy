@@ -419,9 +419,8 @@ async function openRoute(idx) {
     const res = await fetch(`/api/route?routeId=${bus.routeId}`);
     if (!res.ok) throw new Error("노선 정보 오류");
     const data = await res.json();
-    // stations만 있는 응답 구조 또는 합친 구조 둘 다 대응
-    const stData = data?.stations ?? data;
-    let stations = stData?.response?.msgBody?.busRouteStationList ?? [];
+    let stations = data?.response?.msgBody?.busRouteStationList ?? [];
+
     if (!Array.isArray(stations)) stations = [stations];
     if (stations.length === 0) throw new Error("정류장 정보 없음");
 
