@@ -12,8 +12,12 @@
       c.width = 180; c.height = 180;
       var ctx = c.getContext("2d");
       ctx.fillStyle = "#0B0F1A";
-      ctx.beginPath(); ctx.roundRect(0,0,180,180,36); ctx.fill();
-      ctx.font = "110px serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.beginPath();
+      ctx.roundRect(0,0,180,180,36);
+      ctx.fill();
+      ctx.font = "110px serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
       ctx.fillText("🚌", 90, 95);
       var link = document.createElement("link");
       link.rel = "apple-touch-icon";
@@ -25,16 +29,16 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background: #0B0F1A; color: #F1F5F9;
-      font-family: 'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
       min-height: 100vh;
     }
-    /* 헤더 */
     .header {
       position: sticky; top: 0; z-index: 20;
       background: rgba(11,15,26,0.95); backdrop-filter: blur(20px);
       border-bottom: 1px solid rgba(255,255,255,0.07); padding: 16px 20px 12px;
     }
     .header-top { display: flex; align-items: center; justify-content: space-between; }
+    .header-left { display: flex; align-items: center; gap: 10px; }
     .header-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
     .header-sub { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
     .clock { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -50,7 +54,7 @@
     .btn:disabled { color: rgba(255,255,255,0.2); cursor: not-allowed; }
     .last-updated { font-size: 11px; color: rgba(255,255,255,0.22); margin-top: 8px; }
     .content { padding: 14px 16px 60px; }
-    .error {
+    .error-box {
       background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25);
       border-radius: 12px; padding: 13px 16px; color: #FCA5A5;
       font-size: 13px; margin-bottom: 14px; text-align: center; display: none;
@@ -58,7 +62,8 @@
     .spinner-wrap { text-align: center; padding: 72px 0; display: none; }
     @keyframes spin { to { transform: rotate(360deg); } }
     .spinner {
-      width: 40px; height: 40px; border: 3px solid rgba(255,255,255,0.07);
+      width: 40px; height: 40px;
+      border: 3px solid rgba(255,255,255,0.07);
       border-top: 3px solid rgba(255,255,255,0.55);
       border-radius: 50%; margin: 0 auto; animation: spin 0.85s linear infinite;
     }
@@ -67,135 +72,66 @@
     /* 버스 카드 */
     .bus-card {
       background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 16px; padding: 15px 16px; margin-bottom: 11px;
-      opacity: 1; transition: opacity 0.3s; cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
+      border-radius: 16px; padding: 15px 16px; margin-bottom: 11px; transition: opacity 0.3s;
     }
-    .bus-card:active { opacity: 0.7; }
     .bus-card.dimmed { opacity: 0.65; }
-    .bus-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .bus-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
     .bus-badge {
       border-radius: 9px; padding: 3px 12px; font-size: 17px; font-weight: 800;
       letter-spacing: -0.5px; white-space: nowrap; color: #fff;
     }
     .bus-dest { font-size: 12px; color: rgba(255,255,255,0.35); }
-    .tap-hint { font-size: 10px; color: rgba(255,255,255,0.2); margin-left: auto; }
+
+    /* 도착 그리드 */
     .arrival-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-    .arrival-box { background: rgba(0,0,0,0.22); border-radius: 11px; padding: 11px 10px; text-align: center; }
-    .arrival-label { font-size: 10px; color: rgba(255,255,255,0.28); margin-bottom: 7px; }
-    .arrival-min { font-size: 26px; font-weight: 700; line-height: 1; margin-bottom: 5px; }
+    .arrival-box {
+      background: rgba(0,0,0,0.22); border-radius: 11px; padding: 11px 10px; text-align: center;
+    }
+    .arrival-label { font-size: 10px; color: rgba(255,255,255,0.28); margin-bottom: 6px; }
+    .arrival-min { font-size: 26px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
     .arrival-seat { font-size: 11px; color: rgba(255,255,255,0.3); margin-bottom: 3px; }
+
+    /* 현재 위치 표시 */
     .location-row {
-      display: flex; align-items: center; gap: 5px; margin-top: 8px;
-      padding: 7px 10px; background: rgba(255,255,255,0.04);
-      border-radius: 8px; font-size: 11px; color: rgba(255,255,255,0.4);
+      display: flex; align-items: center; gap: 5px;
+      margin-top: 8px; padding: 7px 10px;
+      background: rgba(255,255,255,0.04); border-radius: 8px;
+      font-size: 11px; color: rgba(255,255,255,0.4);
     }
     .location-dot {
       width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
       animation: pulse 1.5s ease-in-out infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
     .location-name { font-weight: 600; color: rgba(255,255,255,0.7); }
-    .location-stops { margin-left: auto; font-size: 10px; color: rgba(255,255,255,0.3); white-space: nowrap; }
+    .location-stops {
+      margin-left: auto; font-size: 10px;
+      color: rgba(255,255,255,0.3); white-space: nowrap;
+    }
+
     .no-info { font-size: 12px; color: rgba(255,255,255,0.2); text-align: center; padding: 8px 0; }
-    .section-label { font-size: 11px; color: rgba(255,255,255,0.3); font-weight: 600; letter-spacing: 0.5px; margin-bottom: 10px; display: none; }
-    .footer { margin-top: 32px; text-align: center; font-size: 10px; color: rgba(255,255,255,0.13); line-height: 2; }
-
-    /* ── 노선도 모달 ── */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,0.75); backdrop-filter: blur(8px);
-      display: none; align-items: flex-end;
+    .section-label {
+      font-size: 11px; color: rgba(255,255,255,0.3);
+      font-weight: 600; letter-spacing: 0.5px; margin-bottom: 10px; display: none;
     }
-    .modal-overlay.show { display: flex; }
-    .modal {
-      width: 100%; max-height: 85vh;
-      background: #131822; border-radius: 24px 24px 0 0;
-      padding: 0 0 40px; overflow: hidden;
-      display: flex; flex-direction: column;
-      animation: slideUp 0.3s ease;
+    .footer {
+      margin-top: 32px; text-align: center;
+      font-size: 10px; color: rgba(255,255,255,0.13); line-height: 2;
     }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .modal-header {
-      padding: 16px 20px 14px; border-bottom: 1px solid rgba(255,255,255,0.07);
-      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
-    }
-    .modal-title { font-size: 16px; font-weight: 800; }
-    .modal-sub { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
-    .modal-close {
-      background: rgba(255,255,255,0.08); border: none; border-radius: 50%;
-      width: 32px; height: 32px; color: #fff; font-size: 16px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-    }
-    .modal-loading { text-align: center; padding: 48px; color: rgba(255,255,255,0.3); font-size: 13px; }
-
-    /* 노선도 */
-    .route-scroll { overflow-y: auto; flex: 1; padding: 16px 20px; }
-    .route-line { display: flex; flex-direction: column; }
-    .route-stop {
-      display: flex; align-items: center; gap: 12px;
-      padding: 2px 0; position: relative; min-height: 44px;
-    }
-    /* 세로 선 */
-    .route-stop::before {
-      content: ""; position: absolute; left: 19px; top: 0; bottom: 0;
-      width: 2px; background: rgba(255,255,255,0.1); z-index: 0;
-    }
-    .route-stop:first-child::before { top: 50%; }
-    .route-stop:last-child::before  { bottom: 50%; }
-
-    /* 정류장 점 */
-    .stop-dot {
-      width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-      border: 2px solid rgba(255,255,255,0.2); background: #131822;
-      z-index: 1; margin-left: 15px;
-    }
-    .stop-dot.current-stop {
-      width: 14px; height: 14px; margin-left: 13px;
-      border: 2px solid #fff; background: #fff;
-      box-shadow: 0 0 10px rgba(255,255,255,0.6);
-    }
-    .stop-dot.target-stop {
-      width: 14px; height: 14px; margin-left: 13px;
-      border: 3px solid #22C55E; background: #131822;
-    }
-
-    /* 버스 위치 점 */
-    .bus-marker {
-      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 16px; z-index: 2; margin-left: 6px;
-      animation: busPulse 1s ease-in-out infinite;
-    }
-    @keyframes busPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.15)} }
-
-    .stop-name {
-      font-size: 13px; color: rgba(255,255,255,0.5); flex: 1;
-      padding: 10px 0;
-    }
-    .stop-name.current { font-weight: 700; color: #F1F5F9; font-size: 14px; }
-    .stop-name.target  { font-weight: 700; color: #22C55E; font-size: 14px; }
-    .stop-order { font-size: 10px; color: rgba(255,255,255,0.2); flex-shrink: 0; }
-
-    /* 범례 */
-    .legend {
-      display: flex; gap: 16px; padding: 10px 20px 0;
-      flex-shrink: 0; flex-wrap: wrap;
-    }
-    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(255,255,255,0.4); }
   </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-top">
-    <div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:22px">🚌</span>
-        <div>
-          <div class="header-title">삼평교</div>
-          <div class="header-sub">판교테크노밸리 · 5198</div>
-        </div>
+    <div class="header-left">
+      <span style="font-size:22px">🚌</span>
+      <div>
+        <div class="header-title">삼평교</div>
+        <div class="header-sub">판교테크노밸리 · 5198</div>
       </div>
     </div>
     <div style="text-align:right">
@@ -211,7 +147,7 @@
 </div>
 
 <div class="content">
-  <div class="error" id="errorBox"></div>
+  <div class="error-box" id="errorBox"></div>
   <div class="spinner-wrap" id="spinner">
     <div class="spinner"></div>
     <div class="spinner-txt">실시간 버스 정보 불러오는 중…</div>
@@ -224,43 +160,22 @@
   </div>
 </div>
 
-<!-- 노선도 모달 -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal" id="modal">
-    <div class="modal-header">
-      <div>
-        <div class="modal-title" id="modalTitle"></div>
-        <div class="modal-sub" id="modalSub"></div>
-      </div>
-      <button class="modal-close" onclick="closeModalDirect()">✕</button>
-    </div>
-    <div class="legend">
-      <div class="legend-item"><span style="font-size:14px">🚌</span> 버스 위치</div>
-      <div class="legend-item"><div style="width:10px;height:10px;border-radius:50%;background:#22C55E"></div> 삼평교 (하차)</div>
-      <div class="legend-item"><div style="width:10px;height:10px;border-radius:50%;background:#fff"></div> 현재 정류장</div>
-    </div>
-    <div id="modalBody" class="route-scroll">
-      <div class="modal-loading">노선 정보 불러오는 중…</div>
-    </div>
-  </div>
-</div>
-
 <script>
 const TARGET = ["5600","5700","5700A","5700B","6900","1007","1007-1"];
 const BUS_COLOR = {
   "5600":"#FF6B35","5700":"#00C9A7","5700A":"#00C9A7","5700B":"#00C9A7",
   "6900":"#A78BFA","1007":"#34D399","1007-1":"#059669"
 };
-const TARGET_STATION_ID = "204000222"; // 삼평교 수서방향 정류장
 
-let busDataCache = []; // 전체 버스 데이터 저장
 let autoMode = false, autoTimer = null;
 
+// 시계
 setInterval(() => {
   const now = new Date();
   document.getElementById("clock").textContent =
     now.toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-  document.getElementById("rush").classList.toggle("show", now.getHours()>=17 && now.getHours()<=20);
+  const h = now.getHours();
+  document.getElementById("rush").classList.toggle("show", h >= 17 && h <= 20);
 }, 1000);
 
 function getBusColor(name) {
@@ -285,21 +200,22 @@ function arrColor(min) {
   if (min <= 10)   return "#EAB308";
   return "#22C55E";
 }
-function parseJson(json) {
+
+function parseJsonData(json) {
   let list = json?.response?.msgBody?.busArrivalList
     ?? json?.msgBody?.busArrivalList ?? json?.busArrivalList ?? [];
   if (!Array.isArray(list)) list = [list];
   return list.map(b => ({
     routeName:   String(b.routeName ?? "-"),
     destination: String(b.routeDestName ?? ""),
-    routeId:     b.routeId ?? null,
-    staOrder:    b.staOrder ?? null,  // 삼평교 정류장 순서
     min1:   secToMin(b.predictTime1),
     seat1:  b.remainSeatCnt1 != null && b.remainSeatCnt1 !== "" ? Number(b.remainSeatCnt1) : -1,
+    plate1: String(b.plateNo1 ?? ""),
     loc1:   b.stationNm1 && b.stationNm1 !== "" ? String(b.stationNm1) : null,
     locNo1: b.locationNo1 !== "" && b.locationNo1 != null ? Number(b.locationNo1) : null,
     min2:   secToMin(b.predictTime2),
     seat2:  b.remainSeatCnt2 != null && b.remainSeatCnt2 !== "" ? Number(b.remainSeatCnt2) : -1,
+    plate2: String(b.plateNo2 ?? ""),
     loc2:   b.stationNm2 && b.stationNm2 !== "" ? String(b.stationNm2) : null,
     locNo2: b.locationNo2 !== "" && b.locationNo2 != null ? Number(b.locationNo2) : null,
   }));
@@ -308,8 +224,8 @@ function parseJson(json) {
 async function fetchBus() {
   const res = await fetch("/api/bus");
   if (!res.ok) throw new Error(`서버 오류 ${res.status}`);
-  const json = await res.json();
-  let list = parseJson(json);
+  const text = await res.text();
+  let list = parseJsonData(JSON.parse(text));
   return list
     .filter(b => isTarget(b.routeName))
     .sort((a, b) => {
@@ -318,55 +234,58 @@ async function fetchBus() {
       const bMin = b.min1 != null ? b.min1 : 999;
       return aMin - bMin;
     });
-
 }
 
-function locationRow(loc, locNo, color) {
-  if (!loc) return "";
-  return `<div class="location-row">
-    <div class="location-dot" style="background:${color}"></div>
-    <span>현재</span>
-    <span class="location-name">${loc}</span>
-    ${locNo != null ? `<span class="location-stops">${locNo}정류장 전</span>` : ""}
-  </div>`;
+function locationRow(loc, locNo, min, color) {
+  if (!loc || min == null) return "";
+  const stops = locNo != null ? `${locNo}정류장 전` : "";
+  return `
+    <div class="location-row">
+      <div class="location-dot" style="background:${color}"></div>
+      <span>현재</span>
+      <span class="location-name">${loc}</span>
+      ${stops ? `<span class="location-stops">${stops}</span>` : ""}
+    </div>`;
 }
 
 function arrivalBox(label, min, seat, loc, locNo, color) {
   const minColor = arrColor(min);
   const minText  = min == null ? "-" : min === 0 ? "곧도착" : `${min}분`;
-  return `<div class="arrival-box">
-    <div class="arrival-label">${label}</div>
-    <div class="arrival-min" style="color:${minColor}">${minText}</div>
-    ${seat >= 0 ? `<div class="arrival-seat">잔여 ${seat}석</div>` : ""}
-    ${locationRow(loc, locNo, color)}
-  </div>`;
+  return `
+    <div class="arrival-box">
+      <div class="arrival-label">${label}</div>
+      <div class="arrival-min" style="color:${minColor}">${minText}</div>
+      ${seat >= 0 ? `<div class="arrival-seat">잔여 ${seat}석</div>` : ""}
+      ${locationRow(loc, locNo, min, color)}
+    </div>`;
 }
 
 function renderBus(buses) {
-  busDataCache = buses;
   const list = document.getElementById("busList");
   document.getElementById("sectionLabel").style.display = buses.length > 0 ? "block" : "none";
   if (buses.length === 0) {
     list.innerHTML = `<div style="text-align:center;padding:56px 0;color:rgba(255,255,255,0.25);font-size:14px">현재 운행 중인 버스가 없어요.</div>`;
     return;
   }
-  list.innerHTML = buses.map((bus, idx) => {
+  list.innerHTML = buses.map(bus => {
     const color  = getBusColor(bus.routeName);
     const noInfo = bus.min1 == null && bus.min2 == null;
-    return `<div class="bus-card" onclick="openRoute(${idx})" style="border-left:4px solid ${color}">
-      <div class="bus-card-top">
-        <div class="bus-badge" style="background:${color};box-shadow:0 3px 12px ${color}44">${bus.routeName}</div>
-        ${bus.destination ? `<div class="bus-dest">→ ${bus.destination} 방면</div>` : ""}
-        <div class="tap-hint">노선 보기 →</div>
-      </div>
-      ${noInfo
-        ? `<div class="no-info">운행 정보 없음</div>`
-        : `<div class="arrival-grid">
-             ${arrivalBox("첫번째 버스", bus.min1, bus.seat1, bus.loc1, bus.locNo1, color)}
-             ${arrivalBox("다음 버스",   bus.min2, bus.seat2, bus.loc2, bus.locNo2, color)}
-           </div>`
-      }
-    </div>`;
+    return `
+      <div class="bus-card">
+        <div class="bus-card-top">
+          <div class="bus-badge" style="background:${color};box-shadow:0 3px 12px ${color}44">
+            ${bus.routeName}
+          </div>
+          ${bus.destination ? `<div class="bus-dest">→ ${bus.destination} 방면</div>` : ""}
+        </div>
+        ${noInfo
+          ? `<div class="no-info">운행 정보 없음</div>`
+          : `<div class="arrival-grid">
+               ${arrivalBox("첫번째 버스", bus.min1, bus.seat1, bus.loc1, bus.locNo1, color)}
+               ${arrivalBox("다음 버스",   bus.min2, bus.seat2, bus.loc2, bus.locNo2, color)}
+             </div>`
+        }
+      </div>`;
   }).join("");
 }
 
@@ -383,8 +302,8 @@ async function refresh() {
     const now = new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     document.getElementById("lastUpdated").textContent = `${now} 업데이트 · ${buses.length}개 노선`;
   } catch(e) {
-    document.getElementById("errorBox").textContent = "⚠️ " + e.message;
-    document.getElementById("errorBox").style.display = "block";
+    errorBox.textContent = "⚠️ " + e.message;
+    errorBox.style.display = "block";
   } finally {
     spinner.style.display = "none"; btn.disabled = false; btn.textContent = "🔄 새로고침";
     document.querySelectorAll(".bus-card").forEach(c => c.classList.remove("dimmed"));
@@ -401,101 +320,6 @@ function toggleAuto() {
     btn.className = "btn btn-default"; btn.textContent = "자동갱신";
     clearInterval(autoTimer);
   }
-}
-
-// ── 노선도 모달 ─────────────────────────────────────
-async function openRoute(idx) {
-  const bus = busDataCache[idx];
-  if (!bus) return;
-
-  const color = getBusColor(bus.routeName);
-  document.getElementById("modalTitle").textContent = `${bus.routeName}번 노선도`;
-  document.getElementById("modalSub").textContent   = `→ ${bus.destination} 방면`;
-  document.getElementById("modalTitle").style.color = color;
-  document.getElementById("modalBody").innerHTML    = `<div class="modal-loading"><div class="spinner" style="margin:0 auto 12px"></div>노선 정보 불러오는 중…</div>`;
-  document.getElementById("modalOverlay").classList.add("show");
-  document.body.style.overflow = "hidden";
-
-  try {
-    if (!bus.routeId) throw new Error("노선 ID 없음");
-    const res = await fetch(`/api/route?routeId=${bus.routeId}`);
-    if (!res.ok) throw new Error("노선 정보 오류");
-    const data = await res.json();
-
-    let stations = data?.response?.msgBody?.busRouteStationList ?? [];
-    if (!Array.isArray(stations)) stations = [stations];
-    if (stations.length === 0) throw new Error("정류장 정보 없음");
-
-    renderRouteMap(stations, bus, color);
-  } catch(e) {
-    document.getElementById("modalBody").innerHTML =
-      `<div class="modal-loading" style="color:#FCA5A5">⚠️ ${e.message}</div>`;
-  }
-}
-
-function renderRouteMap(stations, bus, color) {
-  // 삼평교 정류장 순서 (staOrder)
-  const targetOrder = bus.staOrder ? Number(bus.staOrder) : null;
-
-  // 버스1 현재 위치: staOrder - locationNo1
-  const bus1Order = (targetOrder && bus.locNo1 != null) ? targetOrder - bus.locNo1 : null;
-  const bus2Order = (targetOrder && bus.locNo2 != null) ? targetOrder - bus.locNo2 : null;
-
-  let html = `<div class="route-line">`;
-
-  stations.forEach((st, i) => {
-    const order    = Number(st.stationSeq ?? i + 1);
-    const name     = st.stationName ?? st.stationNm ?? `정류장 ${order}`;
-    const isTarget = targetOrder && order === targetOrder;
-    const isBus1   = bus1Order && order === bus1Order;
-    const isBus2   = bus2Order && order === bus2Order && bus2Order !== bus1Order;
-
-    let dotHtml = "";
-    if (isBus1) {
-      dotHtml = `<div class="bus-marker" style="background:${color}22;border:2px solid ${color}">🚌</div>`;
-    } else if (isBus2) {
-      dotHtml = `<div class="bus-marker" style="background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.3)">🚌</div>`;
-    } else if (isTarget) {
-      dotHtml = `<div class="stop-dot target-stop"></div>`;
-    } else {
-      dotHtml = `<div class="stop-dot ${isBus1 || isBus2 ? "current-stop" : ""}"></div>`;
-    }
-
-    const nameClass = isTarget ? "target" : (isBus1 || isBus2) ? "current" : "";
-
-    html += `<div class="route-stop">
-      ${dotHtml}
-      <div class="stop-name ${nameClass}">
-        ${name}
-        ${isTarget ? " 📍" : ""}
-        ${isBus1 ? ` <span style="font-size:10px;color:${color};margin-left:4px">● 첫번째 버스</span>` : ""}
-        ${isBus2 ? ` <span style="font-size:10px;color:rgba(255,255,255,0.4);margin-left:4px">● 다음 버스</span>` : ""}
-      </div>
-      <div class="stop-order">${order}</div>
-    </div>`;
-  });
-
-  html += `</div>`;
-  document.getElementById("modalBody").innerHTML = html;
-
-  // 삼평교 위치로 스크롤
-  if (bus1Order != null) {
-    const items = document.querySelectorAll(".route-stop");
-    const targetIdx = stations.findIndex(st => Number(st.stationSeq) === bus1Order);
-    if (targetIdx > 0 && items[targetIdx]) {
-      setTimeout(() => {
-        items[targetIdx].scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 200);
-    }
-  }
-}
-
-function closeModal(e) {
-  if (e.target === document.getElementById("modalOverlay")) closeModalDirect();
-}
-function closeModalDirect() {
-  document.getElementById("modalOverlay").classList.remove("show");
-  document.body.style.overflow = "";
 }
 
 refresh();
