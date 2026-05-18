@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/bus-proxy/api/route.js << 'EOF'
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET");
@@ -7,28 +8,17 @@ export default async function handler(req, res) {
 
   if (!routeId) return res.status(400).json({ error: "routeId 필요" });
 
-  const stationUrl = `https://apis.data.go.kr/6410000/busrouteservice/v2/getBusRouteStationListv2`
-    + `?serviceKey=${SERVICE_KEY}&routeId=${routeId}&format=json`;
-
-  const locationUrl = `https://apis.data.go.kr/6410000/buslocationservice/v2/getBusLocationListv2`
+  const url = `https://apis.data.go.kr/6410000/busrouteservice/v2/getBusRouteStationListv2`
     + `?serviceKey=${SERVICE_KEY}&routeId=${routeId}&format=json`;
 
   try {
-    // 정류장 목록 + 버스 위치 동시 요청
-    const [stRes, locRes] = await Promise.all([
-      fetch(stationUrl),
-      fetch(locationUrl),
-    ]);
-
-    const stText  = await stRes.text();
-    const locText = await locRes.text();
-
-    const stData  = JSON.parse(stText);
-    const locData = JSON.parse(locText);
-
+    const response = await fetch(url);
+    const text = await response.text();
     res.setHeader("Content-Type", "application/json");
-    res.status(200).json({ stations: stData, locations: locData });
+    res.status(200).send(text);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 }
+EOF
+echo "done"
