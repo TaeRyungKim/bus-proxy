@@ -86,10 +86,7 @@
       padding: 7px 10px; background: rgba(255,255,255,0.04); border-radius: 8px;
       font-size: 11px; color: rgba(255,255,255,0.4);
     }
-    .location-dot {
-      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
+    .location-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; animation: pulse 1.5s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
     .location-name { font-weight: 600; color: rgba(255,255,255,0.7); }
     .location-stops { margin-left: auto; font-size: 10px; color: rgba(255,255,255,0.3); white-space: nowrap; }
@@ -119,60 +116,42 @@
     .modal-close {
       background: rgba(255,255,255,0.08); border: none; border-radius: 50%;
       width: 32px; height: 32px; color: #fff; font-size: 16px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .modal-toolbar {
       padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
-      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+      display: flex; align-items: center; gap: 8px; flex-shrink: 0; flex-wrap: wrap;
     }
     .track-btn {
       display: flex; align-items: center; gap: 6px;
       background: rgba(96,165,250,0.12); border: 1px solid rgba(96,165,250,0.3);
       border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
-      color: #60A5FA; cursor: pointer; transition: all 0.2s;
+      color: #60A5FA; cursor: pointer; transition: all 0.2s; white-space: nowrap;
     }
-    .track-btn.active {
-      background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4); color: #22C55E;
-    }
+    .track-btn.active { background: rgba(34,197,94,0.15); border-color: rgba(34,197,94,0.4); color: #22C55E; }
     .track-status { font-size: 11px; color: rgba(255,255,255,0.35); }
-    .legend { display: flex; gap: 14px; margin-left: auto; flex-wrap: wrap; }
-    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: rgba(255,255,255,0.35); }
+    .legend { display: flex; gap: 12px; margin-left: auto; }
+    .legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: rgba(255,255,255,0.35); }
     .modal-loading { text-align: center; padding: 48px; color: rgba(255,255,255,0.3); font-size: 13px; }
     .route-scroll { overflow-y: auto; flex: 1; padding: 12px 20px 32px; }
     .route-line { display: flex; flex-direction: column; }
-
-    /* 정류장 아이템 */
     .route-stop {
-      display: flex; align-items: center; gap: 0;
-      position: relative; min-height: 46px;
+      display: flex; align-items: center; position: relative; min-height: 46px;
     }
-    /* 세로 선 */
     .route-stop::before {
       content: ""; position: absolute; left: 24px; top: 0; bottom: 0;
       width: 2px; background: rgba(255,255,255,0.08); z-index: 0;
     }
     .route-stop:first-child::before { top: 50%; }
     .route-stop:last-child::before  { bottom: 50%; }
-
     .stop-col { width: 50px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; z-index: 1; }
-    .stop-dot {
-      width: 10px; height: 10px; border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.15); background: #131822;
-    }
+    .stop-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.15); background: #131822; }
     .stop-dot.is-target { width: 14px; height: 14px; border: 2.5px solid #22C55E; background: rgba(34,197,94,0.15); }
     .stop-dot.is-me     { width: 14px; height: 14px; border: 2.5px solid #60A5FA; background: rgba(96,165,250,0.2); }
-    .stop-dot.is-bus1   { width: 14px; height: 14px; border: 2.5px solid #fff; background: rgba(255,255,255,0.15); }
-    .stop-dot.is-bus2   { width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.08); }
-
-    /* 버스/내위치 마커 */
-    .bus-marker {
-      font-size: 18px; animation: busBounce 1.2s ease-in-out infinite;
-    }
+    .bus-marker { font-size: 18px; animation: busBounce 1.2s ease-in-out infinite; }
     @keyframes busBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
     .me-marker { font-size: 16px; animation: mePulse 1.5s ease-in-out infinite; }
     @keyframes mePulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-
     .stop-info { flex: 1; padding: 10px 0 10px 4px; }
     .stop-name { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.3; }
     .stop-name.is-target { font-weight: 700; color: #22C55E; font-size: 14px; }
@@ -186,13 +165,11 @@
 
 <div class="header">
   <div class="header-top">
-    <div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:22px">🚌</span>
-        <div>
-          <div class="header-title">삼평교</div>
-          <div class="header-sub">판교테크노밸리 · 5198</div>
-        </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:22px">🚌</span>
+      <div>
+        <div class="header-title">삼평교</div>
+        <div class="header-sub">판교테크노밸리 · 5198</div>
       </div>
     </div>
     <div style="text-align:right">
@@ -232,14 +209,12 @@
       <button class="modal-close" onclick="closeModalDirect()">✕</button>
     </div>
     <div class="modal-toolbar">
-      <button class="track-btn" id="trackBtn" onclick="toggleTracking()">
-        📍 내 위치 추적
-      </button>
+      <button class="track-btn" id="trackBtn" onclick="toggleTracking()">📍 내 위치 추적</button>
       <span class="track-status" id="trackStatus"></span>
       <div class="legend">
-        <div class="legend-item"><span>🚌</span> 버스</div>
-        <div class="legend-item"><span style="color:#22C55E">●</span> 삼평교</div>
-        <div class="legend-item"><span style="color:#60A5FA">●</span> 내 위치</div>
+        <div class="legend-item"><span>🚌</span>버스</div>
+        <div class="legend-item"><span style="color:#22C55E">●</span>삼평교</div>
+        <div class="legend-item"><span style="color:#60A5FA">●</span>내위치</div>
       </div>
     </div>
     <div id="modalBody" class="route-scroll">
@@ -255,78 +230,84 @@ const BUS_COLOR = {
   "6900":"#A78BFA","1007":"#34D399","1007-1":"#059669"
 };
 
-let busDataCache  = [];
-let autoMode      = false, autoTimer = null;
-let trackingMode  = false, gpsWatcher = null;
-let myLat = null, myLon = null;
+let busDataCache   = [];
+let autoMode       = false, autoTimer = null;
+let trackingMode   = false, gpsWatcher = null;
+let myLat = null,  myLon = null;
 let currentStations = [], currentBus = null, currentColor = "#fff";
 
 setInterval(() => {
   const now = new Date();
   document.getElementById("clock").textContent =
     now.toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-  document.getElementById("rush").classList.toggle("show", now.getHours()>=17 && now.getHours()<=20);
-}, 1000);
+  document.getElementById("rush").classList.toggle("show", now.getHours()>=17&&now.getHours()<=20);
+},1000);
 
 function getBusColor(name) {
-  if (!name || typeof name !== "string") return "#6B7280";
+  if (!name||typeof name!=="string") return "#6B7280";
   if (BUS_COLOR[name]) return BUS_COLOR[name];
   for (const k of Object.keys(BUS_COLOR)) { if (name.startsWith(k)) return BUS_COLOR[k]; }
   return "#6B7280";
 }
 function isTarget(name) {
-  if (!name || typeof name !== "string") return false;
-  return TARGET.some(t => name === t || name.startsWith(t));
+  if (!name||typeof name!=="string") return false;
+  return TARGET.some(t => name===t||name.startsWith(t));
 }
 function secToMin(v) {
-  if (v == null || v === "" || Number(v) < 0) return null;
+  if (v==null||v===""||Number(v)<0) return null;
   const m = Math.round(Number(v));
-  return m <= 0 ? 0 : m;
+  return m<=0?0:m;
 }
 function arrColor(min) {
-  if (min == null) return "#4B5563";
-  if (min <= 0)    return "#EF4444";
-  if (min <= 5)    return "#F97316";
-  if (min <= 10)   return "#EAB308";
+  if (min==null) return "#4B5563";
+  if (min<=0)    return "#EF4444";
+  if (min<=5)    return "#F97316";
+  if (min<=10)   return "#EAB308";
   return "#22C55E";
 }
 
-// 두 좌표 간 거리 (m)
-function distanceM(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const dLat = (lat2-lat1) * Math.PI/180;
-  const dLon = (lon2-lon1) * Math.PI/180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+// 두 좌표 간 거리(m)
+function distanceM(lat1,lon1,lat2,lon2) {
+  const R=6371000, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
-// 가장 가까운 정류장 찾기
-function findNearestStation(stations, lat, lon) {
-  let minDist = Infinity, minIdx = -1;
-  stations.forEach((st, i) => {
-    const d = distanceM(lat, lon, st.y, st.x);
-    if (d < minDist) { minDist = d; minIdx = i; }
+// 가장 가까운 정류장
+function findNearest(stations, lat, lon) {
+  let minDist=Infinity, minIdx=-1;
+  stations.forEach((st,i)=>{
+    const d=distanceM(lat,lon,st.y,st.x);
+    if(d<minDist){minDist=d;minIdx=i;}
   });
-  return { idx: minIdx, dist: Math.round(minDist) };
+  return {idx:minIdx, dist:Math.round(minDist)};
+}
+
+// 수서 방향 구간만 추출 (turnYn=Y 이전까지)
+function getOneWayStations(stations) {
+  const turnIdx = stations.findIndex(st => st.turnYn === "Y");
+  // turnYn=Y 포함해서 자르기 (회차 정류장까지)
+  if (turnIdx >= 0) return stations.slice(0, turnIdx + 1);
+  return stations;
 }
 
 function parseJson(json) {
   let list = json?.response?.msgBody?.busArrivalList
     ?? json?.msgBody?.busArrivalList ?? json?.busArrivalList ?? [];
   if (!Array.isArray(list)) list = [list];
-  return list.map(b => ({
-    routeName:   String(b.routeName ?? "-"),
-    destination: String(b.routeDestName ?? ""),
-    routeId:     b.routeId ?? null,
-    staOrder:    b.staOrder ?? null,
+  return list.map(b=>({
+    routeName:   String(b.routeName??"-"),
+    destination: String(b.routeDestName??""),
+    routeId:     b.routeId??null,
+    staOrder:    b.staOrder??null,
     min1:   secToMin(b.predictTime1),
-    seat1:  b.remainSeatCnt1 != null && b.remainSeatCnt1 !== "" ? Number(b.remainSeatCnt1) : -1,
-    loc1:   b.stationNm1 && b.stationNm1 !== "" ? String(b.stationNm1) : null,
-    locNo1: b.locationNo1 !== "" && b.locationNo1 != null ? Number(b.locationNo1) : null,
+    seat1:  b.remainSeatCnt1!=null&&b.remainSeatCnt1!==""?Number(b.remainSeatCnt1):-1,
+    loc1:   b.stationNm1&&b.stationNm1!==""?String(b.stationNm1):null,
+    locNo1: b.locationNo1!==""&&b.locationNo1!=null?Number(b.locationNo1):null,
     min2:   secToMin(b.predictTime2),
-    seat2:  b.remainSeatCnt2 != null && b.remainSeatCnt2 !== "" ? Number(b.remainSeatCnt2) : -1,
-    loc2:   b.stationNm2 && b.stationNm2 !== "" ? String(b.stationNm2) : null,
-    locNo2: b.locationNo2 !== "" && b.locationNo2 != null ? Number(b.locationNo2) : null,
+    seat2:  b.remainSeatCnt2!=null&&b.remainSeatCnt2!==""?Number(b.remainSeatCnt2):-1,
+    loc2:   b.stationNm2&&b.stationNm2!==""?String(b.stationNm2):null,
+    locNo2: b.locationNo2!==""&&b.locationNo2!=null?Number(b.locationNo2):null,
   }));
 }
 
@@ -334,263 +315,232 @@ async function fetchBus() {
   const res = await fetch("/api/bus");
   if (!res.ok) throw new Error(`서버 오류 ${res.status}`);
   const json = await res.json();
-  let list = parseJson(json);
-  return list
-    .filter(b => isTarget(b.routeName))
-    .sort((a, b) => (a.min1 ?? 999) - (b.min1 ?? 999));
+  return parseJson(json)
+    .filter(b=>isTarget(b.routeName))
+    .sort((a,b)=>(a.min1??999)-(b.min1??999));
 }
 
-function locationRow(loc, locNo, color) {
+function locationRow(loc,locNo,color) {
   if (!loc) return "";
   return `<div class="location-row">
     <div class="location-dot" style="background:${color}"></div>
     <span>현재</span><span class="location-name">${loc}</span>
-    ${locNo != null ? `<span class="location-stops">${locNo}정류장 전</span>` : ""}
+    ${locNo!=null?`<span class="location-stops">${locNo}정류장 전</span>`:""}
   </div>`;
 }
-function arrivalBox(label, min, seat, loc, locNo, color) {
-  const minColor = arrColor(min);
-  const minText  = min == null ? "-" : min === 0 ? "곧도착" : `${min}분`;
+function arrivalBox(label,min,seat,loc,locNo,color) {
+  const minColor=arrColor(min);
+  const minText=min==null?"-":min===0?"곧도착":`${min}분`;
   return `<div class="arrival-box">
     <div class="arrival-label">${label}</div>
     <div class="arrival-min" style="color:${minColor}">${minText}</div>
-    ${seat >= 0 ? `<div class="arrival-seat">잔여 ${seat}석</div>` : ""}
-    ${locationRow(loc, locNo, color)}
+    ${seat>=0?`<div class="arrival-seat">잔여 ${seat}석</div>`:""}
+    ${locationRow(loc,locNo,color)}
   </div>`;
 }
 
 function renderBus(buses) {
   busDataCache = buses;
   const list = document.getElementById("busList");
-  document.getElementById("sectionLabel").style.display = buses.length > 0 ? "block" : "none";
-  if (buses.length === 0) {
-    list.innerHTML = `<div style="text-align:center;padding:56px 0;color:rgba(255,255,255,0.25);font-size:14px">현재 운행 중인 버스가 없어요.</div>`;
+  document.getElementById("sectionLabel").style.display = buses.length>0?"block":"none";
+  if (buses.length===0) {
+    list.innerHTML=`<div style="text-align:center;padding:56px 0;color:rgba(255,255,255,0.25);font-size:14px">현재 운행 중인 버스가 없어요.</div>`;
     return;
   }
-  list.innerHTML = buses.map((bus, idx) => {
-    const color  = getBusColor(bus.routeName);
-    const noInfo = bus.min1 == null && bus.min2 == null;
+  list.innerHTML = buses.map((bus,idx)=>{
+    const color=getBusColor(bus.routeName);
+    const noInfo=bus.min1==null&&bus.min2==null;
     return `<div class="bus-card" onclick="openRoute(${idx})" style="border-left:4px solid ${color}">
       <div class="bus-card-top">
         <div class="bus-badge" style="background:${color};box-shadow:0 3px 12px ${color}44">${bus.routeName}</div>
-        ${bus.destination ? `<div class="bus-dest">→ ${bus.destination} 방면</div>` : ""}
+        ${bus.destination?`<div class="bus-dest">→ ${bus.destination} 방면</div>`:""}
         <div class="tap-hint">노선도 →</div>
       </div>
       ${noInfo
-        ? `<div class="no-info">운행 정보 없음</div>`
-        : `<div class="arrival-grid">
-             ${arrivalBox("첫번째 버스", bus.min1, bus.seat1, bus.loc1, bus.locNo1, color)}
-             ${arrivalBox("다음 버스",   bus.min2, bus.seat2, bus.loc2, bus.locNo2, color)}
-           </div>`}
+        ?`<div class="no-info">운행 정보 없음</div>`
+        :`<div class="arrival-grid">
+           ${arrivalBox("첫번째 버스",bus.min1,bus.seat1,bus.loc1,bus.locNo1,color)}
+           ${arrivalBox("다음 버스",  bus.min2,bus.seat2,bus.loc2,bus.locNo2,color)}
+         </div>`}
     </div>`;
   }).join("");
 }
 
 async function refresh() {
-  const btn = document.getElementById("refreshBtn");
-  const spinner = document.getElementById("spinner");
-  btn.disabled = true; btn.textContent = "조회중…";
-  spinner.style.display = "block";
-  document.getElementById("errorBox").style.display = "none";
-  document.querySelectorAll(".bus-card").forEach(c => c.classList.add("dimmed"));
+  const btn=document.getElementById("refreshBtn"),spinner=document.getElementById("spinner");
+  btn.disabled=true; btn.textContent="조회중…";
+  spinner.style.display="block";
+  document.getElementById("errorBox").style.display="none";
+  document.querySelectorAll(".bus-card").forEach(c=>c.classList.add("dimmed"));
   try {
-    const buses = await fetchBus();
+    const buses=await fetchBus();
     renderBus(buses);
-    const now = new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-    document.getElementById("lastUpdated").textContent = `${now} 업데이트 · ${buses.length}개 노선`;
+    const now=new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    document.getElementById("lastUpdated").textContent=`${now} 업데이트 · ${buses.length}개 노선`;
   } catch(e) {
-    document.getElementById("errorBox").textContent = "⚠️ " + e.message;
-    document.getElementById("errorBox").style.display = "block";
+    document.getElementById("errorBox").textContent="⚠️ "+e.message;
+    document.getElementById("errorBox").style.display="block";
   } finally {
-    spinner.style.display = "none"; btn.disabled = false; btn.textContent = "🔄 새로고침";
-    document.querySelectorAll(".bus-card").forEach(c => c.classList.remove("dimmed"));
+    spinner.style.display="none"; btn.disabled=false; btn.textContent="🔄 새로고침";
+    document.querySelectorAll(".bus-card").forEach(c=>c.classList.remove("dimmed"));
   }
 }
 
 function toggleAuto() {
-  autoMode = !autoMode;
-  const btn = document.getElementById("autoBtn");
+  autoMode=!autoMode;
+  const btn=document.getElementById("autoBtn");
   if (autoMode) {
-    btn.className = "btn btn-auto"; btn.textContent = "⏱ 30초 자동갱신 ON";
-    autoTimer = setInterval(refresh, 30000);
+    btn.className="btn btn-auto"; btn.textContent="⏱ 30초 자동갱신 ON";
+    autoTimer=setInterval(refresh,30000);
   } else {
-    btn.className = "btn btn-default"; btn.textContent = "자동갱신";
+    btn.className="btn btn-default"; btn.textContent="자동갱신";
     clearInterval(autoTimer);
   }
 }
 
 // ── 노선도 모달 ──────────────────────────────────────
 async function openRoute(idx) {
-  const bus = busDataCache[idx];
+  const bus=busDataCache[idx];
   if (!bus) return;
-  currentBus   = bus;
-  currentColor = getBusColor(bus.routeName);
+  currentBus=bus; currentColor=getBusColor(bus.routeName);
 
-  document.getElementById("modalTitle").textContent = `${bus.routeName}번 노선도`;
-  document.getElementById("modalTitle").style.color = currentColor;
-  document.getElementById("modalSub").textContent   = `→ ${bus.destination} 방면`;
-  document.getElementById("modalBody").innerHTML    = `<div class="modal-loading"><div class="spinner" style="margin:0 auto 12px"></div>노선 정보 불러오는 중…</div>`;
+  document.getElementById("modalTitle").textContent=`${bus.routeName}번 노선도`;
+  document.getElementById("modalTitle").style.color=currentColor;
+  document.getElementById("modalSub").textContent=`→ ${bus.destination} 방면`;
+  document.getElementById("modalBody").innerHTML=`<div class="modal-loading"><div class="spinner" style="margin:0 auto 12px"></div>노선 정보 불러오는 중…</div>`;
   document.getElementById("modalOverlay").classList.add("show");
-  document.body.style.overflow = "hidden";
-
-  // 추적 초기화
+  document.body.style.overflow="hidden";
   stopTracking();
 
   try {
     if (!bus.routeId) throw new Error("노선 ID 없음");
-    const res  = await fetch(`/api/route?routeId=${bus.routeId}`);
-    const text = await res.text();
-    const data = JSON.parse(text);
-    let stations = data?.response?.msgBody?.busRouteStationList ?? [];
-    if (!Array.isArray(stations)) stations = [stations];
-    if (stations.length === 0) throw new Error("정류장 정보 없음");
+    const res=await fetch(`/api/route?routeId=${bus.routeId}`);
+    const text=await res.text();
+    const data=JSON.parse(text);
+    let all=data?.response?.msgBody?.busRouteStationList??[];
+    if (!Array.isArray(all)) all=[all];
+    if (all.length===0) throw new Error("정류장 정보 없음");
 
-    currentStations = stations;
+    // ✅ 수서 방향 구간만 (turnYn=Y 회차 정류장까지)
+    currentStations = getOneWayStations(all);
     renderRouteMap();
   } catch(e) {
-    document.getElementById("modalBody").innerHTML =
+    document.getElementById("modalBody").innerHTML=
       `<div class="modal-loading" style="color:#FCA5A5">⚠️ ${e.message}</div>`;
   }
 }
 
 function renderRouteMap() {
-  const bus      = currentBus;
-  const color    = currentColor;
-  const stations = currentStations;
+  const bus=currentBus, color=currentColor, stations=currentStations;
 
-  // 삼평교 stationSeq
   const targetOrder = bus.staOrder ? Number(bus.staOrder) : null;
-  const bus1Seq = (targetOrder && bus.locNo1 != null) ? targetOrder - bus.locNo1 : null;
-  const bus2Seq = (targetOrder && bus.locNo2 != null) ? targetOrder - bus.locNo2 : null;
+  const bus1Seq = (targetOrder&&bus.locNo1!=null) ? targetOrder-bus.locNo1 : null;
+  const bus2Seq = (targetOrder&&bus.locNo2!=null) ? targetOrder-bus.locNo2 : null;
 
-  // 내 위치에서 가장 가까운 정류장
-  let mySeq = null;
-  let myDist = null;
-  if (myLat != null && myLon != null) {
-    const nearest = findNearestStation(stations, myLat, myLon);
-    if (nearest.idx >= 0) {
-      mySeq  = stations[nearest.idx].stationSeq;
-      myDist = nearest.dist;
+  // ✅ 수서 방향 구간 내에서만 내 위치 매칭
+  let mySeq=null, myDist=null;
+  if (myLat!=null&&myLon!=null) {
+    const nearest=findNearest(stations,myLat,myLon);
+    if (nearest.idx>=0) {
+      mySeq=stations[nearest.idx].stationSeq;
+      myDist=nearest.dist;
     }
   }
 
-  let html = `<div class="route-line">`;
-  stations.forEach((st) => {
-    const seq      = Number(st.stationSeq);
-    const name     = st.stationName ?? `정류장 ${seq}`;
-    const isTarget = targetOrder && seq === targetOrder;
-    const isBus1   = bus1Seq && seq === bus1Seq;
-    const isBus2   = bus2Seq && seq === bus2Seq && bus2Seq !== bus1Seq;
-    const isMe     = mySeq && seq === mySeq;
+  let html=`<div class="route-line">`;
+  stations.forEach(st=>{
+    const seq=Number(st.stationSeq);
+    const name=st.stationName??`정류장 ${seq}`;
+    const isTarget_=targetOrder&&seq===targetOrder;
+    const isBus1=bus1Seq&&seq===bus1Seq;
+    const isBus2=bus2Seq&&seq===bus2Seq&&bus2Seq!==bus1Seq;
+    const isMe=mySeq&&seq===mySeq;
 
-    let dotHtml = "";
-    let nameClass = "";
-    let tagHtml = "";
+    let dotHtml="", nameClass="", tagHtml="";
 
     if (isBus1) {
-      dotHtml   = `<div class="bus-marker">🚌</div>`;
-      nameClass = "is-bus";
-      tagHtml   = `<div class="stop-tag" style="color:${color}">● 첫번째 버스</div>`;
+      dotHtml=`<div class="bus-marker">🚌</div>`;
+      nameClass="is-bus";
+      tagHtml=`<div class="stop-tag" style="color:${color}">● 첫번째 버스</div>`;
     } else if (isBus2) {
-      dotHtml   = `<div class="bus-marker" style="font-size:15px;opacity:0.6">🚌</div>`;
-      nameClass = "is-bus";
-      tagHtml   = `<div class="stop-tag" style="color:rgba(255,255,255,0.35)">● 다음 버스</div>`;
+      dotHtml=`<div class="bus-marker" style="font-size:15px;opacity:0.6">🚌</div>`;
+      nameClass="is-bus";
+      tagHtml=`<div class="stop-tag" style="color:rgba(255,255,255,0.35)">● 다음 버스</div>`;
     } else if (isMe) {
-      dotHtml   = `<div class="me-marker">📍</div>`;
-      nameClass = "is-me";
-      tagHtml   = `<div class="stop-tag" style="color:#60A5FA">● 내 위치 ${myDist != null ? "("+myDist+"m)" : ""}</div>`;
-    } else if (isTarget) {
-      dotHtml   = `<div class="stop-dot is-target"></div>`;
-      nameClass = "is-target";
+      dotHtml=`<div class="me-marker">📍</div>`;
+      nameClass="is-me";
+      tagHtml=`<div class="stop-tag" style="color:#60A5FA">● 내 위치${myDist!=null?" ("+myDist+"m)":""}</div>`;
+    } else if (isTarget_) {
+      dotHtml=`<div class="stop-dot is-target"></div>`;
+      nameClass="is-target";
     } else {
-      dotHtml = `<div class="stop-dot"></div>`;
+      dotHtml=`<div class="stop-dot"></div>`;
     }
 
-    html += `<div class="route-stop">
+    html+=`<div class="route-stop">
       <div class="stop-col">${dotHtml}</div>
       <div class="stop-info">
-        <div class="stop-name ${nameClass}">${name}${isTarget ? " 📍" : ""}</div>
+        <div class="stop-name ${nameClass}">${name}${isTarget_?" 📍":""}</div>
         ${tagHtml}
       </div>
       <div class="stop-seq">${seq}</div>
     </div>`;
   });
-  html += `</div>`;
-  document.getElementById("modalBody").innerHTML = html;
+  html+=`</div>`;
+  document.getElementById("modalBody").innerHTML=html;
 
-  // 스크롤: 내 위치 → 첫번째 버스 → 삼평교 순으로 우선
-  const scrollToSeq = mySeq ?? bus1Seq ?? targetOrder;
+  // 스크롤: 내위치 → 버스1 → 삼평교 우선순위
+  const scrollToSeq=mySeq??bus1Seq??targetOrder;
   if (scrollToSeq) {
-    setTimeout(() => {
-      const items = document.querySelectorAll(".route-stop");
-      const idx   = stations.findIndex(st => Number(st.stationSeq) === scrollToSeq);
-      if (idx >= 0 && items[idx]) {
-        items[idx].scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }, 200);
+    setTimeout(()=>{
+      const items=document.querySelectorAll(".route-stop");
+      const idx=stations.findIndex(st=>Number(st.stationSeq)===scrollToSeq);
+      if (idx>=0&&items[idx]) items[idx].scrollIntoView({behavior:"smooth",block:"center"});
+    },200);
   }
 }
 
 // ── GPS 추적 ─────────────────────────────────────────
 function toggleTracking() {
-  if (trackingMode) {
-    stopTracking();
-  } else {
-    startTracking();
-  }
+  trackingMode ? stopTracking() : startTracking();
 }
-
 function startTracking() {
   if (!navigator.geolocation) {
-    document.getElementById("trackStatus").textContent = "위치 지원 안됨";
-    return;
+    document.getElementById("trackStatus").textContent="위치 지원 안됨"; return;
   }
-  trackingMode = true;
-  const btn = document.getElementById("trackBtn");
-  btn.className = "track-btn active";
-  btn.textContent = "📍 추적 중";
-  document.getElementById("trackStatus").textContent = "위치 확인 중…";
+  trackingMode=true;
+  const btn=document.getElementById("trackBtn");
+  btn.className="track-btn active"; btn.textContent="📍 추적 중";
+  document.getElementById("trackStatus").textContent="위치 확인 중…";
 
-  gpsWatcher = navigator.geolocation.watchPosition(
-    (pos) => {
-      myLat = pos.coords.latitude;
-      myLon = pos.coords.longitude;
-      const acc = Math.round(pos.coords.accuracy);
-      document.getElementById("trackStatus").textContent = `정확도 ±${acc}m`;
-      if (currentStations.length > 0) renderRouteMap();
+  gpsWatcher=navigator.geolocation.watchPosition(
+    pos=>{
+      myLat=pos.coords.latitude; myLon=pos.coords.longitude;
+      const acc=Math.round(pos.coords.accuracy);
+      document.getElementById("trackStatus").textContent=`±${acc}m`;
+      if (currentStations.length>0) renderRouteMap();
     },
-    (err) => {
-      document.getElementById("trackStatus").textContent = "위치 오류";
+    ()=>{
+      document.getElementById("trackStatus").textContent="위치 오류";
       stopTracking();
     },
-    { enableHighAccuracy: true, maximumAge: 5000, timeout: 10000 }
+    {enableHighAccuracy:true, maximumAge:5000, timeout:10000}
   );
 }
-
 function stopTracking() {
-  if (gpsWatcher != null) {
-    navigator.geolocation.clearWatch(gpsWatcher);
-    gpsWatcher = null;
-  }
-  trackingMode = false;
-  myLat = null; myLon = null;
-  const btn = document.getElementById("trackBtn");
-  if (btn) {
-    btn.className = "track-btn";
-    btn.textContent = "📍 내 위치 추적";
-  }
-  const status = document.getElementById("trackStatus");
-  if (status) status.textContent = "";
+  if (gpsWatcher!=null) { navigator.geolocation.clearWatch(gpsWatcher); gpsWatcher=null; }
+  trackingMode=false; myLat=null; myLon=null;
+  const btn=document.getElementById("trackBtn");
+  if (btn){btn.className="track-btn";btn.textContent="📍 내 위치 추적";}
+  const st=document.getElementById("trackStatus");
+  if (st) st.textContent="";
 }
 
-function closeModal(e) {
-  if (e.target === document.getElementById("modalOverlay")) closeModalDirect();
-}
+function closeModal(e) { if(e.target===document.getElementById("modalOverlay")) closeModalDirect(); }
 function closeModalDirect() {
-  stopTracking();
-  currentStations = []; currentBus = null;
+  stopTracking(); currentStations=[]; currentBus=null;
   document.getElementById("modalOverlay").classList.remove("show");
-  document.body.style.overflow = "";
+  document.body.style.overflow="";
 }
 
 refresh();
