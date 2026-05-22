@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const now = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
   const pad = (n) => String(n).padStart(2, "0");
 
-  // 발표 시간 계산
+  // 발표 시간 계산 (02,05,08,11,14,17,20,23시)
   const hours = [23, 20, 17, 14, 11, 8, 5, 2];
   let baseHour = 23;
   let baseDate = new Date(now);
@@ -21,20 +21,20 @@ export default async function handler(req, res) {
   const baseTime    = `${pad(baseHour)}00`;
   const todayStr    = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}`;
 
+  // numOfRows=1000 으로 3일치 충분히 커버
   const url = `https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst`
-    + `?serviceKey=${SERVICE_KEY}&pageNo=1&numOfRows=2000&dataType=JSON`
+    + `?serviceKey=${SERVICE_KEY}&pageNo=1&numOfRows=1000&dataType=JSON`
     + `&base_date=${baseDateStr}&base_time=${baseTime}&nx=${nx}&ny=${ny}`;
 
   try {
     const response = await fetch(url);
     const text = await response.text();
 
-    // 응답 텍스트 확인 후 JSON 파싱
     let data;
     try {
       data = JSON.parse(text);
     } catch(e) {
-      return res.status(500).json({ error: "기상청 응답 파싱 실패", raw: text.slice(0, 200) });
+      return res.status(500).json({ error: "파싱 실패", raw: text.slice(0, 200) });
     }
 
     const resultCode = data?.response?.header?.resultCode;
@@ -44,6 +44,7 @@ export default async function handler(req, res) {
 
     const items = data?.response?.body?.items?.item ?? [];
 
+    // 날짜별 최고/최저 계산
     const todayTemps = items
       .filter(i => i.fcstDate === todayStr && i.category === "TMP")
       .map(i => Number(i.fcstValue));
